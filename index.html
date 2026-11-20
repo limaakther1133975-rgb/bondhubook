@@ -36,12 +36,12 @@
       border: 1.5px solid #fff;
     }
 
-    /* Status Bar (Like Screenshot) */
+    /* Status Bar */
     .status-composer-bar {
       background: #fff; padding: 10px 14px; display: flex; align-items: center; gap: 10px;
       border-bottom: 6px solid #e4e6eb;
     }
-    .avatar-wrap { position: relative; width: 42px; height: 42px; flex-shrink: 0; }
+    .avatar-wrap { position: relative; width: 42px; height: 42px; flex-shrink: 0; cursor: pointer; }
     .avatar-wrap img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; }
     .online-dot {
       width: 11px; height: 11px; background: #31a24c; border: 2px solid #fff;
@@ -58,7 +58,7 @@
     }
     .photo-quick-btn span { font-size: 20px; color: #45bd62; }
 
-    /* Stories Strip (Like Screenshot) */
+    /* Stories Strip */
     .stories-section {
       background: #fff; padding: 12px 10px; border-bottom: 6px solid #e4e6eb;
       display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none;
@@ -130,14 +130,14 @@
       padding: 0 14px; font-weight: 600; font-size: 13px; cursor: pointer;
     }
 
-    /* Section Pages (Friends, Chat, Video, Notif, Profile) */
+    /* Section Pages */
     .section-card { background: #fff; padding: 14px; margin-bottom: 8px; }
     .section-title { font-size: 18px; font-weight: 800; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
     .user-row {
       display: flex; align-items: center; justify-content: space-between;
       padding: 10px 0; border-bottom: 1px solid #f0f2f5;
     }
-    .user-row-left { display: flex; align-items: center; gap: 10px; }
+    .user-row-left { display: flex; align-items: center; gap: 10px; cursor: pointer; }
     .user-row-left img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
     .user-row-left h4 { font-size: 15px; }
     .user-row-left p { font-size: 12px; color: #65676b; }
@@ -227,7 +227,7 @@
         <div class="fb-top-icons">
           <button class="circle-icon" onclick="openPostModal()" title="পোস্ট করুন">+</button>
           <button class="circle-icon" onclick="switchTab('friends')" title="বন্ধু খুঁজুন">🔍</button>
-          <button class="circle-icon" onclick="switchTab('profile')" title="মেনু">☰</button>
+          <button class="circle-icon" onclick="openProfileView(me.uid)" title="আমার প্রোফাইল">☰</button>
         </div>
       </div>
 
@@ -250,7 +250,7 @@
           <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
           <span id="notifBadge" class="badge hidden">0</span>
         </div>
-        <div class="nav-tab" data-tab="profile" onclick="switchTab('profile')">
+        <div class="nav-tab" data-tab="profile" onclick="openProfileView(me.uid)">
           <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
         </div>
       </div>
@@ -258,9 +258,8 @@
 
     <!-- TAB 1: HOME FEED -->
     <div id="tab-home">
-      <!-- Status Bar -->
       <div class="status-composer-bar">
-        <div class="avatar-wrap" onclick="switchTab('profile')">
+        <div class="avatar-wrap" onclick="openProfileView(me.uid)">
           <img id="barAvatar" src="https://i.ibb.co/4pDNDk1/avatar.png" alt="Me" />
           <span class="online-dot"></span>
         </div>
@@ -272,7 +271,6 @@
         </label>
       </div>
 
-      <!-- Stories Bar -->
       <div class="stories-section" id="storiesBar">
         <label class="story-card create-story-card">
           <img id="myStoryThumb" class="create-story-top" src="https://i.ibb.co/4pDNDk1/avatar.png" alt="Story" />
@@ -282,7 +280,6 @@
         </label>
       </div>
 
-      <!-- News Feed Posts -->
       <div id="homeFeedList"><div class="empty-msg">পোস্ট লোড হচ্ছে...</div></div>
     </div>
 
@@ -339,20 +336,25 @@
       </div>
     </div>
 
-    <!-- TAB 6: PROFILE & SETTINGS -->
+    <!-- TAB 6: PROFILE (OWN OR OTHER USER) -->
     <div id="tab-profile" class="hidden">
       <div class="cover-area">
         <img id="profileCoverImg" src="https://images.unsplash.com/photo-1557683316-973673baf926?w=800" alt="Cover" />
-        <label class="btn-gray" style="position:absolute; bottom:10px; right:10px; font-size:12px;">
+        <label id="ownerCoverBtn" class="btn-gray" style="position:absolute; bottom:10px; right:10px; font-size:12px; cursor:pointer;">
           📷 কভার বদলান
           <input type="file" id="coverUploadInput" accept="image/*" class="hidden" />
         </label>
+        <button id="backFromOtherProfileBtn" class="btn-gray hidden" style="position:absolute; top:10px; left:10px; font-size:12px;" onclick="switchTab('home')">
+          ← ফিডে ফিরুন
+        </button>
       </div>
       <img id="profileMainAvatar" class="profile-avatar-big" src="https://i.ibb.co/4pDNDk1/avatar.png" alt="Avatar" />
       <div class="profile-details">
         <h2 id="profileFullName">নাম</h2>
         <p id="profileBioText">BondhuBook-এ স্বাগতম!</p>
-        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+
+        <!-- Own Profile Controls -->
+        <div id="ownerProfileActions" style="display:flex; gap:8px; flex-wrap:wrap;">
           <label class="btn-fb" style="cursor:pointer;">
             📷 প্রোফাইল ছবি বদলান
             <input type="file" id="profileAvatarUpload" accept="image/*" class="hidden" />
@@ -360,9 +362,16 @@
           <button class="btn-gray" onclick="editBioPrompt()">✏️ বায়ো লিখুন</button>
           <button class="btn-gray" style="color:#e41e3f;" onclick="logoutUser()">লগআউট</button>
         </div>
+
+        <!-- Other User Profile Controls -->
+        <div id="peerProfileActions" class="hidden" style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button id="peerAddFriendBtn" class="btn-fb">+ বন্ধু যুক্ত করুন</button>
+          <button id="peerMessageBtn" class="btn-gray">💬 মেসেজ পাঠান</button>
+        </div>
       </div>
-      <div class="section-card" style="margin-bottom:0; font-weight:700;">আমার পোস্টসমূহ</div>
-      <div id="myPostsList"></div>
+
+      <div id="profilePostsHeading" class="section-card" style="margin-bottom:0; font-weight:700;">পোস্টসমূহ</div>
+      <div id="profilePostsList"></div>
     </div>
 
   </div>
@@ -415,6 +424,7 @@
 
   const IMGBB_API_KEY = "262b9bd7c67abe24335fff9098a1b131";
   const DEFAULT_AVATAR = "https://i.ibb.co/4pDNDk1/avatar.png";
+  const DEFAULT_COVER = "https://images.unsplash.com/photo-1557683316-973673baf926?w=800";
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
@@ -423,6 +433,8 @@
   let me = null;
   let myUserData = {};
   let allUsersCache = [];
+  let allPostsCache = [];
+  let viewedProfileUid = null;
   let activeChatUnsub = null;
   let isSignupMode = false;
 
@@ -431,7 +443,7 @@
     fd.append("image", file);
     const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: fd });
     const data = await res.json();
-    if (!data.success) throw new Error("ছবি আপলোড ব্যর্থ হয়েছে");
+    if (!data.success) throw new Error(data.error?.message || "ছবি আপলোড ব্যর্থ হয়েছে");
     return data.data.url;
   }
 
@@ -460,7 +472,7 @@
         if (f) photoURL = await uploadToImgBB(f);
         await updateProfile(cred.user, { displayName: name, photoURL });
         await setDoc(doc(db, "users", cred.user.uid), {
-          uid: cred.user.uid, name, email, photoURL,
+          uid: cred.user.uid, name, email, photoURL, coverURL: DEFAULT_COVER,
           bio: "BondhuBook ব্যবহার করছি!", friends: [], requests: [], createdAt: serverTimestamp()
         });
       } else {
@@ -483,16 +495,16 @@
       document.getElementById("mainApp").classList.add("hidden");
       return;
     }
+    viewedProfileUid = user.uid;
     document.getElementById("authScreen").classList.add("hidden");
     document.getElementById("mainApp").classList.remove("hidden");
 
-    // Ensure user doc exists
     const uRef = doc(db, "users", user.uid);
     const uSnap = await getDoc(uRef);
     if (!uSnap.exists()) {
       await setDoc(uRef, {
         uid: user.uid, name: user.displayName || user.email.split("@")[0],
-        email: user.email, photoURL: user.photoURL || DEFAULT_AVATAR,
+        email: user.email, photoURL: user.photoURL || DEFAULT_AVATAR, coverURL: DEFAULT_COVER,
         bio: "BondhuBook ব্যবহার করছি!", friends: [], requests: [], createdAt: serverTimestamp()
       });
     }
@@ -502,16 +514,16 @@
       const av = myUserData.photoURL || user.photoURL || DEFAULT_AVATAR;
       document.getElementById("barAvatar").src = av;
       document.getElementById("myStoryThumb").src = av;
-      document.getElementById("profileMainAvatar").src = av;
-      document.getElementById("profileFullName").textContent = myUserData.name || user.displayName;
-      document.getElementById("profileBioText").textContent = myUserData.bio || "BondhuBook-এ স্বাগতম!";
-      if (myUserData.coverURL) document.getElementById("profileCoverImg").src = myUserData.coverURL;
 
       const reqCount = (myUserData.requests || []).length;
       const reqBadge = document.getElementById("reqBadge");
       reqBadge.textContent = reqCount;
       reqBadge.classList.toggle("hidden", reqCount === 0);
+
       renderUsersAndFriends();
+      if (!document.getElementById("tab-profile").classList.contains("hidden")) {
+        renderProfilePage(viewedProfileUid || me.uid);
+      }
     });
 
     listenUsers();
@@ -522,11 +534,80 @@
 
   // TAB NAVIGATION
   window.switchTab = (tabName) => {
+    if (tabName === "profile" && !viewedProfileUid && me) {
+      viewedProfileUid = me.uid;
+    }
     document.querySelectorAll(".nav-tab").forEach(t => t.classList.toggle("active", t.dataset.tab === tabName));
     ["home", "friends", "chat", "video", "notif", "profile"].forEach(id => {
       document.getElementById(`tab-${id}`).classList.toggle("hidden", id !== tabName);
     });
+    if (tabName === "profile") {
+      renderProfilePage(viewedProfileUid || me.uid);
+    }
   };
+
+  // OPEN ANY USER'S PROFILE (LIKE FACEBOOK)
+  window.openProfileView = (targetUid) => {
+    if (!targetUid) return;
+    viewedProfileUid = targetUid;
+    switchTab("profile");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  function renderProfilePage(targetUid) {
+    const isMe = targetUid === me.uid;
+    const targetUser = isMe
+      ? { uid: me.uid, name: myUserData.name || me.displayName || "ইউজার", bio: myUserData.bio || "BondhuBook-এ স্বাগতম!", photoURL: myUserData.photoURL || DEFAULT_AVATAR, coverURL: myUserData.coverURL || DEFAULT_COVER, requests: myUserData.requests || [] }
+      : (allUsersCache.find(u => u.uid === targetUid) || { uid: targetUid, name: "BondhuBook মেম্বার", bio: "BondhuBook ব্যবহার করছি!", photoURL: DEFAULT_AVATAR, coverURL: DEFAULT_COVER, requests: [] });
+
+    document.getElementById("profileCoverImg").src = targetUser.coverURL || DEFAULT_COVER;
+    document.getElementById("profileMainAvatar").src = targetUser.photoURL || DEFAULT_AVATAR;
+    document.getElementById("profileFullName").textContent = targetUser.name || "ইউজার";
+    document.getElementById("profileBioText").textContent = targetUser.bio || "BondhuBook-এ স্বাগতম!";
+
+    document.getElementById("ownerCoverBtn").classList.toggle("hidden", !isMe);
+    document.getElementById("ownerProfileActions").classList.toggle("hidden", !isMe);
+    document.getElementById("peerProfileActions").classList.toggle("hidden", isMe);
+    document.getElementById("backFromOtherProfileBtn").classList.toggle("hidden", isMe);
+    document.getElementById("profilePostsHeading").textContent = isMe ? "আমার পোস্টসমূহ" : `${targetUser.name || "ইউজার"}-এর পোস্টসমূহ`;
+
+    if (!isMe) {
+      const myFriends = myUserData.friends || [];
+      const isFriend = myFriends.includes(targetUser.uid);
+      const sentReq = (targetUser.requests || []).includes(me.uid);
+      const addBtn = document.getElementById("peerAddFriendBtn");
+      addBtn.className = isFriend ? "btn-gray" : "btn-fb";
+      addBtn.textContent = isFriend ? "বন্ধু ✓" : (sentReq ? "রিকোয়েস্ট পাঠানো হয়েছে" : "+ বন্ধু যুক্ত করুন");
+      addBtn.onclick = async () => {
+        if (isFriend || sentReq) return;
+        try {
+          await updateDoc(doc(db, "users", targetUser.uid), { requests: arrayUnion(me.uid) });
+          await addDoc(collection(db, "notifications"), {
+            toUid: targetUser.uid, text: `${myUserData.name || 'কেউ'} আপনাকে ফ্রেন্ড রিকোয়েস্ট পাঠিয়েছেন`, createdAt: serverTimestamp()
+          });
+          addBtn.textContent = "রিকোয়েস্ট পাঠানো হয়েছে";
+          addBtn.className = "btn-gray";
+        } catch (err) {
+          alert(err.message);
+        }
+      };
+
+      document.getElementById("peerMessageBtn").onclick = () => {
+        openChatWith(targetUser.uid, targetUser.name || "বন্ধু", targetUser.photoURL || DEFAULT_AVATAR);
+      };
+    }
+
+    const pBox = document.getElementById("profilePostsList");
+    pBox.innerHTML = "";
+    const userPosts = allPostsCache.filter(item => item.p.authorId === targetUid);
+    if (!userPosts.length) {
+      pBox.innerHTML = '<div class="empty-msg">এখনো কোনো পোস্ট নেই।</div>';
+      return;
+    }
+    userPosts.forEach(item => {
+      pBox.appendChild(createPostCard(item.pid, item.p, item.embedUrl));
+    });
+  }
 
   // POST & VIDEO MODAL
   window.openPostModal = (videoMode = false) => {
@@ -641,21 +722,25 @@
     onSnapshot(query(collection(db, "posts"), orderBy("createdAt", "desc")), (snap) => {
       const homeBox = document.getElementById("homeFeedList");
       const videoBox = document.getElementById("videoFeedList");
-      const myBox = document.getElementById("myPostsList");
-      homeBox.innerHTML = ""; videoBox.innerHTML = ""; myBox.innerHTML = "";
+      homeBox.innerHTML = ""; videoBox.innerHTML = "";
+      allPostsCache = [];
 
       snap.forEach(docSnap => {
         const p = docSnap.data();
         const pid = docSnap.id;
         const embedUrl = getYoutubeEmbed(p.videoUrl);
+        allPostsCache.push({ pid, p, embedUrl });
 
         homeBox.appendChild(createPostCard(pid, p, embedUrl));
         if (embedUrl || p.videoUrl) videoBox.appendChild(createPostCard(pid, p, embedUrl));
-        if (p.authorId === me.uid) myBox.appendChild(createPostCard(pid, p, embedUrl));
       });
 
       if (!homeBox.innerHTML) homeBox.innerHTML = '<div class="empty-msg">এখনো কোনো পোস্ট নেই। প্রথম পোস্টটি করুন!</div>';
       if (!videoBox.innerHTML) videoBox.innerHTML = '<div class="empty-msg">এখনো কোনো ভিডিও পোস্ট নেই।</div>';
+
+      if (!document.getElementById("tab-profile").classList.contains("hidden")) {
+        renderProfilePage(viewedProfileUid || me.uid);
+      }
     });
   }
 
@@ -668,7 +753,7 @@
     card.className = "post-card";
     card.innerHTML = `
       <div class="post-top">
-        <div class="post-author" onclick="openChatWith('${p.authorId}', '${escapeHtml(p.authorName)}', '${p.authorPhoto || DEFAULT_AVATAR}')">
+        <div class="post-author" onclick="openProfileView('${p.authorId}')">
           <img src="${p.authorPhoto || DEFAULT_AVATAR}" alt="User" />
           <div>
             <h4>${escapeHtml(p.authorName)}</h4>
@@ -686,7 +771,7 @@
       <div class="post-action-row">
         <button class="p-btn ${isLiked ? 'liked' : ''}">👍 লাইক</button>
         <button class="p-btn">💬 কমেন্ট</button>
-        <button class="p-btn">✉️ মেসেজ</button>
+        <button class="p-btn">👤 প্রোফাইল</button>
       </div>
       <div class="comments-box">
         ${comments.map(c => `<div class="cmt-bubble"><strong>${escapeHtml(c.userName)}</strong>${escapeHtml(c.text)}</div>`).join("")}
@@ -698,7 +783,6 @@
     `;
 
     const btns = card.querySelectorAll(".p-btn");
-    // Like
     btns[0].onclick = async () => {
       await updateDoc(doc(db, "posts", pid), {
         likes: isLiked ? arrayRemove(me.uid) : arrayUnion(me.uid)
@@ -709,12 +793,9 @@
         });
       }
     };
-    // Focus comment
     btns[1].onclick = () => card.querySelector("input").focus();
-    // Message author
-    btns[2].onclick = () => openChatWith(p.authorId, p.authorName, p.authorPhoto || DEFAULT_AVATAR);
+    btns[2].onclick = () => openProfileView(p.authorId);
 
-    // Add comment
     card.querySelector("form").onsubmit = async (e) => {
       e.preventDefault();
       const inp = e.target.querySelector("input");
@@ -739,6 +820,9 @@
       allUsersCache = [];
       snap.forEach(d => { if (d.id !== me.uid) allUsersCache.push(d.data()); });
       renderUsersAndFriends();
+      if (!document.getElementById("tab-profile").classList.contains("hidden")) {
+        renderProfilePage(viewedProfileUid || me.uid);
+      }
     });
   }
 
@@ -755,14 +839,13 @@
 
     reqBox.innerHTML = ""; allBox.innerHTML = ""; chatBox.innerHTML = "";
 
-    // Requests
     const reqUsers = allUsersCache.filter(u => myReqs.includes(u.uid));
     if (!reqUsers.length) reqBox.innerHTML = '<div class="empty-msg">কোনো নতুন রিকোয়েস্ট নেই</div>';
     reqUsers.forEach(u => {
       const row = document.createElement("div");
       row.className = "user-row";
       row.innerHTML = `
-        <div class="user-row-left">
+        <div class="user-row-left" onclick="openProfileView('${u.uid}')">
           <img src="${u.photoURL || DEFAULT_AVATAR}" />
           <div><h4>${escapeHtml(u.name)}</h4><p>বন্ধু হতে চান</p></div>
         </div>
@@ -775,7 +858,6 @@
       reqBox.appendChild(row);
     });
 
-    // All Users & Chat Contacts
     allUsersCache.filter(u => (u.name || "").toLowerCase().includes(term)).forEach(u => {
       const isFriend = myFriends.includes(u.uid);
       const sentReq = (u.requests || []).includes(me.uid);
@@ -783,9 +865,9 @@
       const row = document.createElement("div");
       row.className = "user-row";
       row.innerHTML = `
-        <div class="user-row-left">
+        <div class="user-row-left" onclick="openProfileView('${u.uid}')">
           <img src="${u.photoURL || DEFAULT_AVATAR}" />
-          <div><h4>${escapeHtml(u.name)}</h4><p>${isFriend ? 'বন্ধু ✓' : 'BondhuBook মেম্বার'}</p></div>
+          <div><h4>${escapeHtml(u.name)}</h4><p>${isFriend ? 'বন্ধু ✓' : 'প্রোফাইল দেখতে ট্যাপ করুন'}</p></div>
         </div>
         <div style="display:flex; gap:6px;">
           <button class="${isFriend ? 'btn-gray' : 'btn-fb'}">${isFriend ? 'বন্ধু' : (sentReq ? 'Sent' : '+ Add')}</button>
@@ -803,25 +885,27 @@
       msgBtn.onclick = () => openChatWith(u.uid, u.name, u.photoURL || DEFAULT_AVATAR);
       allBox.appendChild(row);
 
-      // Chat Contact Row
       const cRow = document.createElement("div");
       cRow.className = "user-row";
       cRow.style.cursor = "pointer";
       cRow.innerHTML = `
-        <div class="user-row-left">
+        <div class="user-row-left" onclick="openProfileView('${u.uid}')">
           <img src="${u.photoURL || DEFAULT_AVATAR}" />
           <div><h4>${escapeHtml(u.name)}</h4><p>মেসেজ পাঠাতে ট্যাপ করুন</p></div>
         </div>
-        <span style="color:#1877f2; font-weight:700;">চ্যাট →</span>
+        <span class="chat-open-link" style="color:#1877f2; font-weight:700;">চ্যাট →</span>
       `;
-      cRow.onclick = () => openChatWith(u.uid, u.name, u.photoURL || DEFAULT_AVATAR);
+      cRow.querySelector(".chat-open-link").onclick = (e) => {
+        e.stopPropagation();
+        openChatWith(u.uid, u.name, u.photoURL || DEFAULT_AVATAR);
+      };
       chatBox.appendChild(cRow);
     });
   }
 
   // MESSENGER REALTIME CHAT
   window.openChatWith = (peerUid, peerName, peerAvatar) => {
-    if (peerUid === me.uid) return switchTab("profile");
+    if (peerUid === me.uid) return openProfileView(me.uid);
     switchTab("chat");
     document.getElementById("chatUserListView").classList.add("hidden");
     document.getElementById("chatConversationView").classList.remove("hidden");
@@ -888,25 +972,39 @@
   document.getElementById("profileAvatarUpload").onchange = async (e) => {
     const f = e.target.files[0];
     if (!f) return;
-    alert("প্রোফাইল ছবি আপলোড হচ্ছে...");
-    const url = await uploadToImgBB(f);
-    await updateProfile(me, { photoURL: url });
-    await updateDoc(doc(db, "users", me.uid), { photoURL: url });
-    alert("প্রোফাইল ছবি আপডেট হয়েছে!");
+    try {
+      alert("প্রোফাইল ছবি আপলোড হচ্ছে...");
+      const url = await uploadToImgBB(f);
+      await updateProfile(me, { photoURL: url });
+      await updateDoc(doc(db, "users", me.uid), { photoURL: url });
+      alert("প্রোফাইল ছবি আপডেট হয়েছে!");
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   document.getElementById("coverUploadInput").onchange = async (e) => {
     const f = e.target.files[0];
     if (!f) return;
-    alert("কভার ফটো আপলোড হচ্ছে...");
-    const url = await uploadToImgBB(f);
-    await updateDoc(doc(db, "users", me.uid), { coverURL: url });
-    alert("কভার ফটো আপডেট হয়েছে!");
+    try {
+      alert("কভার ফটো আপলোড হচ্ছে...");
+      const url = await uploadToImgBB(f);
+      await updateDoc(doc(db, "users", me.uid), { coverURL: url });
+      alert("কভার ফটো আপডেট হয়েছে!");
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   window.editBioPrompt = async () => {
     const bio = prompt("আপনার নতুন বায়ো লিখুন:", myUserData.bio || "");
-    if (bio !== null) await updateDoc(doc(db, "users", me.uid), { bio });
+    if (bio !== null) {
+      try {
+        await updateDoc(doc(db, "users", me.uid), { bio });
+      } catch (err) {
+        alert(err.message);
+      }
+    }
   };
 
   function escapeHtml(s) {
