@@ -13,7 +13,7 @@
     body { background: #c9ccd1; color: #050505; }
     .app-shell { max-width: 520px; margin: 0 auto; background: #f0f2f5; min-height: 100vh; position: relative; padding-bottom: 36px; box-shadow: 0 0 15px rgba(0,0,0,0.08); }
 
-    /* Top App Header (Facebook Style) */
+    /* Top App Header */
     .fb-header { background: #fff; position: sticky; top: 0; z-index: 200; border-bottom: 1px solid #ddd; }
     .fb-top-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px 6px; }
     .fb-logo { color: #1877f2; font-size: 26px; font-weight: 800; letter-spacing: -0.8px; cursor: pointer; }
@@ -104,7 +104,7 @@
     .create-story-label { text-align: center; font-size: 12px; font-weight: 700; color: #050505; padding-bottom: 8px; }
     .story-count-badge {
       position: absolute; top: 8px; left: 8px; z-index: 2; background: #1877f2; color: #fff;
-      font-size: 11px; font-weight: 700; width: 22px; height: 22px; border-radius: 6px;
+      font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
     }
     .story-user-name {
@@ -133,6 +133,22 @@
       display: flex; justify-content: space-between; padding: 8px 14px;
       font-size: 13px; color: #65676b; border-bottom: 1px solid #e4e6eb;
     }
+
+    /* Reaction Bar */
+    .reaction-picker-row {
+      display: flex; justify-content: space-around; padding: 5px 8px;
+      border-bottom: 1px solid #f0f2f5; gap: 4px;
+    }
+    .react-chip {
+      flex: 1; background: #f7f8fa; border: 1px solid #e4e6eb; border-radius: 18px;
+      padding: 6px 4px; font-size: 12px; font-weight: 700; color: #65676b;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px;
+    }
+    .react-chip.active-like { background: #e7f3ff; border-color: #1877f2; color: #1877f2; }
+    .react-chip.active-love { background: #ffeef2; border-color: #e41e3f; color: #e41e3f; }
+    .react-chip.active-haha { background: #fff8e1; border-color: #f7b928; color: #b06000; }
+    .react-chip.active-wow  { background: #fff3e0; border-color: #ff9800; color: #e65100; }
+
     .post-action-row { display: flex; padding: 4px 8px; }
     .p-btn {
       flex: 1; background: none; border: none; padding: 8px 4px; font-size: 12px;
@@ -140,7 +156,6 @@
       display: flex; align-items: center; justify-content: center; gap: 4px;
     }
     .p-btn:active { background: #f0f2f5; }
-    .p-btn.liked { color: #1877f2; }
 
     /* Comments */
     .comments-box { padding: 8px 14px 12px; background: #f7f8fa; border-top: 1px solid #eee; }
@@ -181,24 +196,62 @@
     .chat-footer { display: flex; gap: 8px; padding: 10px; border-top: 1px solid #ddd; background: #fff; }
     .chat-footer input { flex: 1; border: 1px solid #ddd; border-radius: 20px; padding: 9px 14px; font-size: 14px; outline: none; }
 
-    /* Profile Page */
-    .cover-area { height: 160px; background: linear-gradient(135deg, #1877f2, #00c6ff); position: relative; }
+    /* Facebook-Style Profile Page */
+    .cover-area { height: 175px; background: #bcc0c4; position: relative; }
     .cover-area img { width: 100%; height: 100%; object-fit: cover; }
-    .profile-avatar-big {
-      width: 110px; height: 110px; border-radius: 50%; border: 4px solid #fff;
-      object-fit: cover; margin: -55px 0 8px 16px; position: relative; background: #fff;
+    .cam-float-btn {
+      position: absolute; width: 34px; height: 34px; border-radius: 50%;
+      background: #e4e6eb; color: #050505; border: 2px solid #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
     }
-    .profile-details { padding: 0 16px 14px; background: #fff; border-bottom: 6px solid #e4e6eb; }
-    .profile-details h2 { font-size: 22px; }
-    .profile-details p { color: #65676b; font-size: 14px; margin: 4px 0 10px; }
-    .profile-stats-row { display: flex; gap: 14px; font-size: 13px; font-weight: 700; color: #050505; margin-bottom: 12px; }
+    .avatar-hero-wrap {
+      position: relative; width: 124px; height: 124px; margin: -62px 0 8px 16px;
+    }
+    .profile-avatar-big {
+      width: 124px; height: 124px; border-radius: 50%; border: 4px solid #fff;
+      object-fit: cover; background: #fff; display: block;
+    }
+    .profile-details { padding: 0 16px 12px; background: #fff; border-bottom: 1px solid #e4e6eb; }
+    .profile-details h2 { font-size: 23px; font-weight: 800; }
+    .profile-follow-line { font-size: 13px; color: #65676b; margin: 4px 0 6px; }
+    .profile-follow-line strong { color: #050505; }
+    .profile-bio-text { color: #050505; font-size: 14px; line-height: 1.4; margin-bottom: 12px; white-space: pre-wrap; }
+    .profile-cta-row { display: flex; gap: 8px; margin-bottom: 10px; }
+    .profile-cta-primary {
+      flex: 1; background: #1877f2; color: #fff; border: none; border-radius: 7px;
+      padding: 9px 12px; font-size: 14px; font-weight: 700; cursor: pointer;
+    }
+    .profile-cta-secondary {
+      flex: 1; background: #e4e6eb; color: #050505; border: none; border-radius: 7px;
+      padding: 9px 12px; font-size: 14px; font-weight: 700; cursor: pointer;
+    }
+    .profile-sub-actions { display: flex; gap: 8px; flex-wrap: wrap; padding-top: 4px; }
+
+    /* Profile Sub-Tabs */
+    .profile-subtabs {
+      display: flex; background: #fff; border-bottom: 6px solid #e4e6eb;
+    }
+    .p-subtab {
+      flex: 1; text-align: center; padding: 11px 6px; font-size: 14px; font-weight: 700;
+      color: #65676b; cursor: pointer; border-bottom: 3px solid transparent;
+    }
+    .p-subtab.active { color: #1877f2; border-bottom-color: #1877f2; }
+
+    .photo-grid-3 {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px;
+      background: #fff; padding: 4px;
+    }
+    .photo-grid-item {
+      aspect-ratio: 1 / 1; width: 100%; object-fit: cover; display: block; background: #e4e6eb;
+    }
 
     /* Modals */
     .modal-overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 500;
       display: flex; align-items: center; justify-content: center; padding: 16px;
     }
-    .modal-box { background: #fff; width: 100%; max-width: 460px; border-radius: 12px; padding: 16px; }
+    .modal-box { background: #fff; width: 100%; max-width: 460px; border-radius: 12px; padding: 16px; max-height: 85vh; overflow-y: auto; }
     .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 12px; }
     .modal-box textarea, .modal-box input[type="text"] {
       width: 100%; border: 1px solid #ddd; border-radius: 8px; padding: 10px;
@@ -206,14 +259,30 @@
     }
     .media-pick-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
 
-    /* Story Viewer */
+    /* Full Screen Story Viewer with Reactions & Viewers */
     .story-viewer {
       position: fixed; inset: 0; background: #000; z-index: 600;
-      display: flex; flex-direction: column; justify-content: space-between; padding: 18px;
+      display: flex; flex-direction: column; justify-content: space-between; padding: 14px;
     }
-    .story-viewer img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
-    .story-viewer-top { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; color: #fff; }
-    .story-caption-box { position: relative; z-index: 2; color: #fff; text-align: center; font-size: 14px; background: rgba(0,0,0,0.55); padding: 8px 12px; border-radius: 10px; }
+    .story-viewer img.story-main-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+    .story-viewer-top { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; color: #fff; gap: 8px; }
+    .story-bottom-panel { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 8px; }
+    .story-caption-box { color: #fff; text-align: center; font-size: 14px; background: rgba(0,0,0,0.6); padding: 8px 12px; border-radius: 10px; }
+    .story-react-bar { display: flex; justify-content: space-around; gap: 6px; background: rgba(20,20,20,0.75); padding: 8px; border-radius: 24px; }
+    .story-react-btn {
+      flex: 1; background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 16px; padding: 7px 4px; font-size: 13px; font-weight: 700; cursor: pointer;
+    }
+    .story-react-btn.active { background: #1877f2; border-color: #1877f2; }
+    .story-insights-btn {
+      align-self: center; background: rgba(255,255,255,0.18); color: #fff;
+      border: 1px solid rgba(255,255,255,0.3); border-radius: 18px; padding: 7px 14px;
+      font-size: 12px; font-weight: 700; cursor: pointer;
+    }
+    .viewer-item-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0; border-bottom: 1px solid #f0f2f5; font-size: 13px;
+    }
 
     /* Auth Screen */
     .auth-screen { padding: 40px 20px; text-align: center; background: #fff; min-height: 100vh; }
@@ -223,7 +292,7 @@
     .auth-btn { width: 100%; background: #1877f2; color: #fff; border: none; padding: 13px; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; }
 
     .hidden { display: none !important; }
-    .empty-msg { text-align: center; padding: 28px 16px; color: #65676b; font-size: 14px; }
+    .empty-msg { text-align: center; padding: 28px 16px; color: #65676b; font-size: 14px; background: #fff; }
   </style>
 </head>
 <body>
@@ -241,7 +310,7 @@
       <label style="font-weight:600;">প্রোফাইল ছবি (ঐচ্ছিক):</label><br/>
       <input type="file" id="regPhoto" accept="image/*" style="margin-top:4px;" />
     </div>
-    <button id="authActionBtn" class="auth-btn">লগইন করুন</button>
+    <button type="button" id="authActionBtn" class="auth-btn">লগইন করুন</button>
     <div id="switchAuthBtn" style="margin-top:18px; color:#1877f2; font-weight:700; font-size:14px; cursor:pointer;">
       নতুন অ্যাকাউন্ট তৈরি করুন
     </div>
@@ -250,7 +319,7 @@
   <!-- MAIN APP -->
   <div id="mainApp" class="hidden">
 
-    <!-- Facebook-Style Sticky Header -->
+    <!-- Top Sticky Header -->
     <div class="fb-header">
       <div class="fb-top-row">
         <div class="fb-logo" onclick="switchTab('home')">BondhuBook</div>
@@ -294,7 +363,7 @@
           <img id="barAvatar" src="https://i.ibb.co/4pDNDk1/avatar.png" alt="Me" />
           <span class="online-dot"></span>
         </div>
-        <div class="status-pill" onclick="openPostModal()">একটি স্ট্যাটাস আপডেট পোস্ট করুন</div>
+        <div class="status-pill" onclick="openPostModal()">আপনি কী ভাবছেন?</div>
         <label class="photo-quick-btn">
           <span>🖼️</span>
           ফটো
@@ -311,7 +380,7 @@
         <div class="story-card create-story-card" onclick="openStoryModal()">
           <img id="myStoryThumb" class="create-story-top" src="https://i.ibb.co/4pDNDk1/avatar.png" alt="Story" />
           <div class="create-story-plus">+</div>
-          <div class="create-story-label">স্টোরি তৈরি করুন</div>
+          <div class="create-story-label">স্টোরিতে যোগ করুন</div>
         </div>
       </div>
 
@@ -360,7 +429,7 @@
     <!-- TAB 4: VIDEO PLATFORM -->
     <div id="tab-video" class="hidden">
       <div class="section-card" style="display:flex; justify-content:space-between; align-items:center;">
-        <span style="font-weight:800; font-size:18px;">🎬 BondhuBook ভিডিও</span>
+        <span style="font-weight:800; font-size:18px;">🎬 BondhuBook Reels & ভিডিও</span>
         <button type="button" class="btn-fb" onclick="openPostModal(true)">+ ভিডিও যোগ করুন</button>
       </div>
       <div id="videoFeedList"><div class="empty-msg">ভিডিও লোড হচ্ছে...</div></div>
@@ -374,45 +443,61 @@
       </div>
     </div>
 
-    <!-- TAB 6: PROFILE & SETTINGS (OWN OR OTHER USER) -->
+    <!-- TAB 6: FACEBOOK-STYLE PROFILE (OWN OR OTHER USER) -->
     <div id="tab-profile" class="hidden">
       <div class="cover-area">
         <img id="profileCoverImg" src="https://images.unsplash.com/photo-1557683316-973673baf926?w=800" alt="Cover" />
-        <label id="ownerCoverBtn" class="btn-gray" style="position:absolute; bottom:10px; right:10px; font-size:12px; cursor:pointer;">
-          📷 কভার বদলান
+        <label id="ownerCoverCamBtn" class="cam-float-btn" style="bottom:10px; right:12px;" title="কভার বদলান">
+          📷
           <input type="file" id="coverUploadInput" accept="image/*" class="hidden" />
         </label>
         <button type="button" id="backFromOtherProfileBtn" class="btn-gray hidden" style="position:absolute; top:10px; left:10px; font-size:12px;" onclick="switchTab('home')">
           ← ফিডে ফিরুন
         </button>
       </div>
-      <img id="profileMainAvatar" class="profile-avatar-big" src="https://i.ibb.co/4pDNDk1/avatar.png" alt="Avatar" />
+
+      <div class="avatar-hero-wrap">
+        <img id="profileMainAvatar" class="profile-avatar-big" src="https://i.ibb.co/4pDNDk1/avatar.png" alt="Avatar" />
+        <label id="ownerAvatarCamBtn" class="cam-float-btn" style="bottom:4px; right:4px;" title="প্রোফাইল ছবি বদলান">
+          📷
+          <input type="file" id="profileAvatarUpload" accept="image/*" class="hidden" />
+        </label>
+      </div>
+
       <div class="profile-details">
         <h2 id="profileFullName">নাম</h2>
-        <p id="profileBioText">BondhuBook-এ স্বাগতম!</p>
-        <div class="profile-stats-row">
-          <span id="profilePostCount">📝 ০টি পোস্ট</span>
-          <span id="profileFriendCount">👥 ০জন বন্ধু</span>
+        <div class="profile-follow-line">
+          <strong id="profileFriendCount">০</strong> জন বন্ধু • <strong id="profilePostCount">০</strong> টি পোস্ট
+        </div>
+        <div id="profileBioText" class="profile-bio-text">BondhuBook-এ স্বাগতম!</div>
+
+        <div id="ownerProfileActions">
+          <div class="profile-cta-row">
+            <button type="button" class="profile-cta-primary" onclick="editBioPrompt()">✏️ বায়ো ও বিবরণ</button>
+            <button type="button" class="profile-cta-secondary" onclick="openStoryModal()">⊕ স্টোরিতে যোগ করুন</button>
+          </div>
+          <div class="profile-sub-actions">
+            <button type="button" class="btn-gray" onclick="openPostModal()">+ নতুন পোস্ট</button>
+            <button type="button" class="btn-gray" onclick="editNamePrompt()">⚙️ নাম বদলান</button>
+            <button type="button" class="btn-gray" style="color:#e41e3f;" onclick="logoutUser()">লগআউট</button>
+          </div>
         </div>
 
-        <div id="ownerProfileActions" style="display:flex; gap:8px; flex-wrap:wrap;">
-          <label class="btn-fb" style="cursor:pointer;">
-            📷 প্রোফাইল ছবি বদলান
-            <input type="file" id="profileAvatarUpload" accept="image/*" class="hidden" />
-          </label>
-          <button type="button" class="btn-gray" onclick="editBioPrompt()">✏️ বায়ো লিখুন</button>
-          <button type="button" class="btn-gray" onclick="editNamePrompt()">⚙️ নাম ও সেটিংস</button>
-          <button type="button" class="btn-gray" style="color:#e41e3f;" onclick="logoutUser()">লগআউট</button>
-        </div>
-
-        <div id="peerProfileActions" class="hidden" style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button type="button" id="peerAddFriendBtn" class="btn-fb">+ বন্ধু যুক্ত করুন</button>
-          <button type="button" id="peerMessageBtn" class="btn-gray">💬 মেসেজ পাঠান</button>
+        <div id="peerProfileActions" class="hidden">
+          <div class="profile-cta-row">
+            <button type="button" id="peerAddFriendBtn" class="profile-cta-primary">+ বন্ধু যুক্ত করুন</button>
+            <button type="button" id="peerMessageBtn" class="profile-cta-secondary">💬 মেসেজ পাঠান</button>
+          </div>
         </div>
       </div>
 
-      <div id="profilePostsHeading" class="section-card" style="margin-bottom:0; font-weight:700;">পোস্টসমূহ</div>
-      <div id="profilePostsList"></div>
+      <div class="profile-subtabs">
+        <div id="pSubtabAll" class="p-subtab active" onclick="setProfileSubtab('all')">সব</div>
+        <div id="pSubtabReels" class="p-subtab" onclick="setProfileSubtab('reels')">Reels</div>
+        <div id="pSubtabPhotos" class="p-subtab" onclick="setProfileSubtab('photos')">ফটো</div>
+      </div>
+
+      <div id="profileContentBox"></div>
     </div>
 
   </div>
@@ -425,10 +510,9 @@
       <strong id="modalHeading">পোস্ট তৈরি করুন</strong>
       <button type="button" class="circle-icon" onclick="closePostModal()" style="width:30px; height:30px;">✕</button>
     </div>
-    <textarea id="modalPostText" rows="3" placeholder="আপনার মনে কী চলছে?"></textarea>
-    <input type="text" id="modalVideoUrl" class="hidden" placeholder="YouTube বা ভিডিও লিংক দিন (ঐচ্ছিক)" />
+    <textarea id="modalPostText" rows="3" placeholder="আপনি কী ভাবছেন?"></textarea>
+    <input type="text" id="modalVideoUrl" class="hidden" placeholder="YouTube বা ভিডিও লিংক দিন (যেমন: https://youtu.be/...)" />
     <img id="modalImgPreview" style="width:100%; max-height:220px; object-fit:cover; border-radius:8px; margin-bottom:10px; display:none;" />
-    <video id="modalVideoPreview" controls playsinline style="width:100%; max-height:220px; border-radius:8px; margin-bottom:10px; display:none; background:#000;"></video>
     <div id="modalStatusNote" style="font-size:12px; color:#1877f2; font-weight:600; margin-bottom:8px;"></div>
     <div id="modalMediaRow" style="display:flex; justify-content:space-between; align-items:center; gap:6px; flex-wrap:wrap;">
       <div class="media-pick-row" style="margin-bottom:0;">
@@ -436,10 +520,7 @@
           🖼️ ছবি
           <input type="file" id="modalPhotoInput" accept="image/*" class="hidden" />
         </label>
-        <label id="modalVideoFileLabel" class="btn-gray" style="cursor:pointer;">
-          🎬 গ্যালারি ভিডিও
-          <input type="file" id="modalVideoFileInput" accept="video/*" class="hidden" />
-        </label>
+        <button type="button" id="modalVideoLinkBtn" class="btn-gray" onclick="toggleVideoUrlInput()">🎬 ভিডিও লিংক</button>
       </div>
       <button type="button" id="submitPostBtn" class="btn-fb">পোস্ট করুন</button>
     </div>
@@ -465,20 +546,39 @@
   </div>
 </div>
 
-<!-- FULL SCREEN STORY VIEWER -->
+<!-- FULL SCREEN STORY VIEWER WITH REACTIONS & VIEWERS -->
 <div id="storyViewer" class="story-viewer hidden">
   <div class="story-viewer-top">
-    <strong id="storyViewerUser">ইউজার</strong>
-    <button type="button" class="circle-icon" onclick="document.getElementById('storyViewer').classList.add('hidden')">✕</button>
+    <div>
+      <strong id="storyViewerUser">ইউজার</strong><br/>
+      <span id="storyViewerStats" style="font-size:11px; opacity:0.85;"></span>
+    </div>
+    <button type="button" class="circle-icon" onclick="closeStoryViewer()">✕</button>
   </div>
-  <img id="storyViewerImg" src="" alt="Story" />
-  <div id="storyViewerCaption" class="story-caption-box">BondhuBook স্টোরি</div>
+  <img id="storyViewerImg" class="story-main-img" src="" alt="Story" />
+  <div class="story-bottom-panel">
+    <div id="storyViewerCaption" class="story-caption-box">BondhuBook স্টোরি</div>
+    <div id="storyReactionBar" class="story-react-bar"></div>
+    <button type="button" id="storyInsightsBtn" class="story-insights-btn hidden" onclick="openStoryInsightsModal()">👁️ কারা দেখেছে ও রিঅ্যাক্ট দিয়েছে</button>
+  </div>
+</div>
+
+<!-- STORY VIEWERS & REACTIONS MODAL -->
+<div id="storyInsightsModal" class="modal-overlay hidden" style="z-index:700;">
+  <div class="modal-box">
+    <div class="modal-header">
+      <strong id="storyInsightsTitle">স্টোরি ভিউয়ার ও রিঅ্যাকশন</strong>
+      <button type="button" class="circle-icon" onclick="document.getElementById('storyInsightsModal').classList.add('hidden')" style="width:30px; height:30px;">✕</button>
+    </div>
+    <div id="storyInsightsSummary" style="font-size:13px; font-weight:700; color:#1877f2; margin-bottom:10px;"></div>
+    <div id="storyInsightsList"></div>
+  </div>
 </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, arrayUnion, arrayRemove, serverTimestamp, setDoc, getDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, arrayUnion, arrayRemove, serverTimestamp, setDoc, getDoc, getDocs, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCG_svkcE_wDDYo3URQRJX3qZW5dNywf2k",
@@ -502,7 +602,10 @@
   let myUserData = {};
   let allUsersCache = [];
   let allPostsCache = [];
+  let allStoriesCache = [];
+  let activeStoryId = null;
   let viewedProfileUid = null;
+  let activeProfileSubtab = "all";
   let activeChatPeerUid = null;
   let activeChatUnsub = null;
   let roomListeners = {};
@@ -512,7 +615,13 @@
   let currentFeedFilter = "all";
   let editingPostId = null;
   let selectedPostImageFile = null;
-  let selectedPostVideoFile = null;
+
+  const REACTION_TYPES = [
+    { key: "like", emoji: "👍", label: "লাইক", activeClass: "active-like" },
+    { key: "love", emoji: "❤️", label: "লাভ",   activeClass: "active-love" },
+    { key: "haha", emoji: "😂", label: "ফানি",  activeClass: "active-haha" },
+    { key: "wow",  emoji: "😮", label: "ওয়াও",  activeClass: "active-wow" }
+  ];
 
   async function uploadToImgBB(file) {
     const fd = new FormData();
@@ -521,25 +630,6 @@
     const data = await res.json();
     if (!data.success) throw new Error(data.error?.message || "ছবি আপলোড ব্যর্থ হয়েছে");
     return data.data.url;
-  }
-
-  function fileToDataUrl(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = () => reject(new Error("ফাইল পড়া যায়নি"));
-      reader.readAsDataURL(file);
-    });
-  }
-
-  async function uploadMediaFile(file) {
-    if (file.type.startsWith("image/")) {
-      return await uploadToImgBB(file);
-    }
-    if (file.size > 12 * 1024 * 1024) {
-      throw new Error("গ্যালারি ভিডিওর সাইজ ১২ MB-এর কম রাখুন অথবা YouTube লিংক দিন");
-    }
-    return await fileToDataUrl(file);
   }
 
   // AUTH LOGIC
@@ -670,15 +760,70 @@
     const uidToOpen = targetUid || (me && me.uid);
     if (!uidToOpen || !me) return;
     viewedProfileUid = uidToOpen;
+    activeProfileSubtab = "all";
     switchTab("profile");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  // PROFILE SUBTABS
+  window.setProfileSubtab = (subtab) => {
+    activeProfileSubtab = subtab;
+    document.getElementById("pSubtabAll").classList.toggle("active", subtab === "all");
+    document.getElementById("pSubtabReels").classList.toggle("active", subtab === "reels");
+    document.getElementById("pSubtabPhotos").classList.toggle("active", subtab === "photos");
+    renderProfileSubtabContent(viewedProfileUid || (me && me.uid));
+  };
+
+  function renderProfileSubtabContent(targetUid) {
+    const box = document.getElementById("profileContentBox");
+    if (!box || !targetUid) return;
+    box.innerHTML = "";
+
+    const userPosts = allPostsCache.filter(item => item.p.authorId === targetUid);
+
+    if (activeProfileSubtab === "all") {
+      if (!userPosts.length) {
+        box.innerHTML = '<div class="empty-msg">এখনো কোনো পোস্ট নেই।</div>';
+        return;
+      }
+      userPosts.forEach(item => box.appendChild(createPostCard(item.pid, item.p, item.embedUrl)));
+      return;
+    }
+
+    if (activeProfileSubtab === "reels") {
+      const videoPosts = userPosts.filter(item => Boolean(item.embedUrl || item.p.videoUrl));
+      if (!videoPosts.length) {
+        box.innerHTML = '<div class="empty-msg">কোনো Reels বা ভিডিও পোস্ট নেই।</div>';
+        return;
+      }
+      videoPosts.forEach(item => box.appendChild(createPostCard(item.pid, item.p, item.embedUrl)));
+      return;
+    }
+
+    if (activeProfileSubtab === "photos") {
+      const photoPosts = userPosts.filter(item => Boolean(item.p.imageUrl));
+      if (!photoPosts.length) {
+        box.innerHTML = '<div class="empty-msg">কোনো ফটো পোস্ট নেই।</div>';
+        return;
+      }
+      const grid = document.createElement("div");
+      grid.className = "photo-grid-3";
+      photoPosts.forEach(item => {
+        const img = document.createElement("img");
+        img.className = "photo-grid-item";
+        img.src = item.p.imageUrl;
+        img.alt = "Photo";
+        grid.appendChild(img);
+      });
+      box.appendChild(grid);
+    }
+  }
 
   function renderProfilePage(targetUid) {
     if (!me) return;
     const isMe = targetUid === me.uid;
     const targetUser = isMe
-      ? { uid: me.uid, name: myUserData.name || me.displayName || "ইউজার", bio: myUserData.bio || "BondhuBook-এ স্বাগতম!", photoURL: myUserData.photoURL || DEFAULT_AVATAR, coverURL: myUserData.coverURL || DEFAULT_COVER, friends: myUserData.friends || [], requests: myUserData.requests || [] }
+      ? { uid: me.uid, name: myUserData.name || me.displayName || "ইউজার", bio: myUserData.bio || "BondhuBook ব্যবহার করছি!", photoURL: myUserData.photoURL || DEFAULT_AVATAR, coverURL: myUserData.coverURL || DEFAULT_COVER, friends: myUserData.friends || [], requests: myUserData.requests || [] }
       : (allUsersCache.find(u => u.uid === targetUid) || { uid: targetUid, name: "BondhuBook মেম্বার", bio: "BondhuBook ব্যবহার করছি!", photoURL: DEFAULT_AVATAR, coverURL: DEFAULT_COVER, friends: [], requests: [] });
 
     const userPosts = allPostsCache.filter(item => item.p.authorId === targetUid);
@@ -687,22 +832,22 @@
     document.getElementById("profileCoverImg").src = targetUser.coverURL || DEFAULT_COVER;
     document.getElementById("profileMainAvatar").src = targetUser.photoURL || DEFAULT_AVATAR;
     document.getElementById("profileFullName").textContent = targetUser.name || "ইউজার";
-    document.getElementById("profileBioText").textContent = targetUser.bio || "BondhuBook-এ স্বাগতম!";
-    document.getElementById("profilePostCount").textContent = `📝 ${userPosts.length}টি পোস্ট`;
-    document.getElementById("profileFriendCount").textContent = `👥 ${friendCount}জন বন্ধু`;
+    document.getElementById("profileBioText").textContent = targetUser.bio || "BondhuBook ব্যবহার করছি!";
+    document.getElementById("profilePostCount").textContent = userPosts.length;
+    document.getElementById("profileFriendCount").textContent = friendCount;
 
-    document.getElementById("ownerCoverBtn").classList.toggle("hidden", !isMe);
+    document.getElementById("ownerCoverCamBtn").classList.toggle("hidden", !isMe);
+    document.getElementById("ownerAvatarCamBtn").classList.toggle("hidden", !isMe);
     document.getElementById("ownerProfileActions").classList.toggle("hidden", !isMe);
     document.getElementById("peerProfileActions").classList.toggle("hidden", isMe);
     document.getElementById("backFromOtherProfileBtn").classList.toggle("hidden", isMe);
-    document.getElementById("profilePostsHeading").textContent = isMe ? "আমার পোস্টসমূহ" : `${targetUser.name || "ইউজার"}-এর পোস্টসমূহ`;
 
     if (!isMe) {
       const myFriends = myUserData.friends || [];
       const isFriend = myFriends.includes(targetUser.uid);
       const sentReq = (targetUser.requests || []).includes(me.uid);
       const addBtn = document.getElementById("peerAddFriendBtn");
-      addBtn.className = isFriend ? "btn-gray" : "btn-fb";
+      addBtn.className = isFriend ? "profile-cta-secondary" : "profile-cta-primary";
       addBtn.textContent = isFriend ? "বন্ধু ✓" : (sentReq ? "রিকোয়েস্ট পাঠানো হয়েছে" : "+ বন্ধু যুক্ত করুন");
       addBtn.onclick = async () => {
         if (isFriend || sentReq) return;
@@ -712,7 +857,7 @@
             toUid: targetUser.uid, text: `${myUserData.name || 'কেউ'} আপনাকে ফ্রেন্ড রিকোয়েস্ট পাঠিয়েছেন`, createdAt: serverTimestamp()
           });
           addBtn.textContent = "রিকোয়েস্ট পাঠানো হয়েছে";
-          addBtn.className = "btn-gray";
+          addBtn.className = "profile-cta-secondary";
         } catch (err) {
           alert(err.message);
         }
@@ -723,25 +868,24 @@
       };
     }
 
-    const pBox = document.getElementById("profilePostsList");
-    pBox.innerHTML = "";
-    if (!userPosts.length) {
-      pBox.innerHTML = '<div class="empty-msg">এখনো কোনো পোস্ট নেই।</div>';
-      return;
-    }
-    userPosts.forEach(item => {
-      pBox.appendChild(createPostCard(item.pid, item.p, item.embedUrl));
-    });
+    document.getElementById("pSubtabAll").classList.toggle("active", activeProfileSubtab === "all");
+    document.getElementById("pSubtabReels").classList.toggle("active", activeProfileSubtab === "reels");
+    document.getElementById("pSubtabPhotos").classList.toggle("active", activeProfileSubtab === "photos");
+    renderProfileSubtabContent(targetUid);
   }
 
-  // POST & VIDEO MODAL (CREATE, EDIT, PHOTO & GALLERY VIDEO)
+  // POST & VIDEO MODAL
+  window.toggleVideoUrlInput = () => {
+    const inp = document.getElementById("modalVideoUrl");
+    inp.classList.toggle("hidden");
+    if (!inp.classList.contains("hidden")) inp.focus();
+  };
+
   window.openPostModal = (videoMode = false, editItem = null) => {
     editingPostId = editItem ? editItem.pid : null;
     selectedPostImageFile = null;
-    selectedPostVideoFile = null;
     document.getElementById("postModal").classList.remove("hidden");
     document.getElementById("modalImgPreview").style.display = "none";
-    document.getElementById("modalVideoPreview").style.display = "none";
     document.getElementById("modalStatusNote").textContent = "";
 
     if (editItem) {
@@ -750,15 +894,15 @@
       document.getElementById("modalVideoUrl").classList.toggle("hidden", !editItem.p.videoUrl);
       document.getElementById("modalVideoUrl").value = editItem.p.videoUrl || "";
       document.getElementById("modalPhotoLabel").classList.add("hidden");
-      document.getElementById("modalVideoFileLabel").classList.add("hidden");
+      document.getElementById("modalVideoLinkBtn").classList.add("hidden");
       document.getElementById("submitPostBtn").textContent = "আপডেট করুন";
     } else {
-      document.getElementById("modalHeading").textContent = videoMode ? "ভিডিও শেয়ার করুন" : "পোস্ট তৈরি করুন";
+      document.getElementById("modalHeading").textContent = videoMode ? "ভিডিও / Reels শেয়ার করুন" : "পোস্ট তৈরি করুন";
       document.getElementById("modalPostText").value = "";
       document.getElementById("modalVideoUrl").value = "";
       document.getElementById("modalVideoUrl").classList.toggle("hidden", !videoMode);
       document.getElementById("modalPhotoLabel").classList.remove("hidden");
-      document.getElementById("modalVideoFileLabel").classList.remove("hidden");
+      document.getElementById("modalVideoLinkBtn").classList.remove("hidden");
       document.getElementById("submitPostBtn").textContent = "পোস্ট করুন";
     }
   };
@@ -766,16 +910,13 @@
   window.closePostModal = () => {
     editingPostId = null;
     selectedPostImageFile = null;
-    selectedPostVideoFile = null;
     document.getElementById("postModal").classList.add("hidden");
     document.getElementById("modalPostText").value = "";
     document.getElementById("modalVideoUrl").value = "";
     document.getElementById("modalPhotoInput").value = "";
-    document.getElementById("modalVideoFileInput").value = "";
     document.getElementById("modalPhotoLabel").classList.remove("hidden");
-    document.getElementById("modalVideoFileLabel").classList.remove("hidden");
+    document.getElementById("modalVideoLinkBtn").classList.remove("hidden");
     document.getElementById("modalImgPreview").style.display = "none";
-    document.getElementById("modalVideoPreview").style.display = "none";
     document.getElementById("modalStatusNote").textContent = "";
     document.getElementById("submitPostBtn").textContent = "পোস্ট করুন";
   };
@@ -796,24 +937,9 @@
     const f = e.target.files[0];
     if (f) {
       selectedPostImageFile = f;
-      selectedPostVideoFile = null;
-      document.getElementById("modalVideoPreview").style.display = "none";
       document.getElementById("modalImgPreview").src = URL.createObjectURL(f);
       document.getElementById("modalImgPreview").style.display = "block";
       document.getElementById("modalStatusNote").textContent = `ছবি সিলেক্ট হয়েছে: ${f.name}`;
-    }
-    e.target.value = "";
-  };
-
-  document.getElementById("modalVideoFileInput").onchange = (e) => {
-    const f = e.target.files[0];
-    if (f) {
-      selectedPostVideoFile = f;
-      selectedPostImageFile = null;
-      document.getElementById("modalImgPreview").style.display = "none";
-      document.getElementById("modalVideoPreview").src = URL.createObjectURL(f);
-      document.getElementById("modalVideoPreview").style.display = "block";
-      document.getElementById("modalStatusNote").textContent = `গ্যালারি ভিডিও সিলেক্ট হয়েছে: ${f.name}`;
     }
     e.target.value = "";
   };
@@ -822,8 +948,8 @@
     if (!me) return;
     const text = document.getElementById("modalPostText").value.trim();
     const videoUrl = document.getElementById("modalVideoUrl").value.trim();
-    if (!text && !selectedPostImageFile && !selectedPostVideoFile && !videoUrl && !editingPostId) {
-      return alert("কিছু লিখুন অথবা ছবি/ভিডিও সিলেক্ট করুন");
+    if (!text && !selectedPostImageFile && !videoUrl && !editingPostId) {
+      return alert("কিছু লিখুন, ছবি সিলেক্ট করুন অথবা ভিডিও লিংক দিন");
     }
 
     const btn = document.getElementById("submitPostBtn");
@@ -838,12 +964,8 @@
         });
       } else {
         let imageUrl = "";
-        let uploadedVideoData = "";
         if (selectedPostImageFile) {
-          imageUrl = await uploadMediaFile(selectedPostImageFile);
-        }
-        if (selectedPostVideoFile) {
-          uploadedVideoData = await uploadMediaFile(selectedPostVideoFile);
+          imageUrl = await uploadToImgBB(selectedPostImageFile);
         }
         await addDoc(collection(db, "posts"), {
           authorId: me.uid,
@@ -852,8 +974,8 @@
           text,
           imageUrl,
           videoUrl,
-          videoData: uploadedVideoData,
           likes: [],
+          reactions: {},
           comments: [],
           createdAt: serverTimestamp()
         });
@@ -867,7 +989,7 @@
     }
   };
 
-  // STORIES WITH CAPTION
+  // STORIES WITH CAPTION, REACTIONS & VIEWERS
   window.openStoryModal = () => {
     document.getElementById("storyModal").classList.remove("hidden");
   };
@@ -900,6 +1022,8 @@
         userName: myUserData.name || "বন্ধু",
         caption,
         imageUrl: imgUrl,
+        viewers: {},
+        reactions: {},
         createdAt: serverTimestamp()
       });
       closeStoryModal();
@@ -911,38 +1035,178 @@
     }
   };
 
+  async function recordStoryView(storyId, storyData) {
+    if (!me || !storyId) return;
+    if (storyData.userId === me.uid) return;
+    const viewers = storyData.viewers || {};
+    if (viewers[me.uid]) return;
+    try {
+      await updateDoc(doc(db, "stories", storyId), {
+        [`viewers.${me.uid}`]: {
+          name: myUserData.name || me.displayName || "ইউজার",
+          photoURL: myUserData.photoURL || DEFAULT_AVATAR,
+          viewedAt: Date.now()
+        }
+      });
+    } catch (_) {}
+  }
+
+  function renderStoryViewerUI(storyId) {
+    const entry = allStoriesCache.find(x => x.id === storyId);
+    if (!entry || !me) return;
+    const s = entry.data;
+    const isOwner = s.userId === me.uid;
+    const viewersMap = s.viewers || {};
+    const reactionsMap = s.reactions || {};
+    const viewerCount = Object.keys(viewersMap).length;
+    const reactCount = Object.keys(reactionsMap).length;
+    const myReact = reactionsMap[me.uid]?.type || null;
+
+    document.getElementById("storyViewerUser").textContent = s.userName || "ইউজার";
+    document.getElementById("storyViewerImg").src = s.imageUrl || "";
+    document.getElementById("storyViewerCaption").textContent = s.caption || "BondhuBook স্টোরি";
+    document.getElementById("storyViewerStats").textContent = isOwner
+      ? `👁️ ${viewerCount} জন দেখেছেন • ❤️ ${reactCount} রিঅ্যাক্ট`
+      : (reactCount > 0 ? `❤️ ${reactCount} রিঅ্যাক্ট` : "স্টোরিতে রিঅ্যাক্ট দিন");
+
+    const reactBar = document.getElementById("storyReactionBar");
+    reactBar.innerHTML = "";
+    REACTION_TYPES.forEach(rt => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = `story-react-btn ${myReact === rt.key ? 'active' : ''}`;
+      btn.textContent = `${rt.emoji} ${rt.label}`;
+      btn.onclick = async () => {
+        const nextType = myReact === rt.key ? null : rt.key;
+        try {
+          if (nextType) {
+            await updateDoc(doc(db, "stories", storyId), {
+              [`reactions.${me.uid}`]: {
+                name: myUserData.name || me.displayName || "ইউজার",
+                photoURL: myUserData.photoURL || DEFAULT_AVATAR,
+                type: nextType,
+                emoji: rt.emoji,
+                label: rt.label
+              }
+            });
+            if (!isOwner && s.userId) {
+              await addDoc(collection(db, "notifications"), {
+                toUid: s.userId,
+                text: `${myUserData.name || 'কেউ'} আপনার স্টোরিতে ${rt.emoji} ${rt.label} রিঅ্যাক্ট দিয়েছেন`,
+                createdAt: serverTimestamp()
+              });
+            }
+          } else {
+            const updatedReacts = Object.assign({}, reactionsMap);
+            delete updatedReacts[me.uid];
+            await updateDoc(doc(db, "stories", storyId), { reactions: updatedReacts });
+          }
+        } catch (err) {
+          alert(err.message);
+        }
+      };
+      reactBar.appendChild(btn);
+    });
+
+    const insightsBtn = document.getElementById("storyInsightsBtn");
+    insightsBtn.classList.toggle("hidden", !isOwner);
+  }
+
+  window.openStoryInsightsModal = () => {
+    if (!activeStoryId) return;
+    const entry = allStoriesCache.find(x => x.id === activeStoryId);
+    if (!entry) return;
+    const s = entry.data;
+    const viewersMap = s.viewers || {};
+    const reactionsMap = s.reactions || {};
+
+    const allPersonUids = Array.from(new Set([...Object.keys(viewersMap), ...Object.keys(reactionsMap)]));
+    document.getElementById("storyInsightsTitle").textContent = `${s.userName || "আমার"} স্টোরির ভিউ ও রিঅ্যাক্ট`;
+    document.getElementById("storyInsightsSummary").textContent = `মোট দেখেছেন: ${Object.keys(viewersMap).length} জন • মোট রিঅ্যাক্ট: ${Object.keys(reactionsMap).length}টি`;
+
+    const listEl = document.getElementById("storyInsightsList");
+    listEl.innerHTML = "";
+    if (!allPersonUids.length) {
+      listEl.innerHTML = '<div class="empty-msg">এখনো কেউ স্টোরি দেখেনি বা রিঅ্যাক্ট দেয়নি।</div>';
+    } else {
+      allPersonUids.forEach(uid => {
+        const vInfo = viewersMap[uid] || {};
+        const rInfo = reactionsMap[uid] || null;
+        const name = (rInfo && rInfo.name) || vInfo.name || "BondhuBook মেম্বার";
+        const avatar = (rInfo && rInfo.photoURL) || vInfo.photoURL || DEFAULT_AVATAR;
+        const badgeText = rInfo ? `${rInfo.emoji} ${rInfo.label}` : "👁️ দেখেছেন";
+
+        const row = document.createElement("div");
+        row.className = "viewer-item-row";
+        row.innerHTML = `
+          <div style="display:flex; align-items:center; gap:8px;">
+            <img src="${avatar}" style="width:34px; height:34px; border-radius:50%; object-fit:cover;" />
+            <strong>${escapeHtml(name)}</strong>
+          </div>
+          <span style="font-weight:700; color:#1877f2;">${badgeText}</span>
+        `;
+        listEl.appendChild(row);
+      });
+    }
+    document.getElementById("storyInsightsModal").classList.remove("hidden");
+  };
+
+  window.closeStoryViewer = () => {
+    activeStoryId = null;
+    document.getElementById("storyViewer").classList.add("hidden");
+  };
+
   function listenStories() {
     onSnapshot(query(collection(db, "stories"), orderBy("createdAt", "desc")), (snap) => {
       const bar = document.getElementById("storiesBar");
       const firstCard = bar.firstElementChild;
       bar.innerHTML = "";
       bar.appendChild(firstCard);
+      allStoriesCache = [];
 
       snap.forEach(d => {
         const s = d.data();
+        const sid = d.id;
+        allStoriesCache.push({ id: sid, data: s });
+
+        const vCount = Object.keys(s.viewers || {}).length;
+        const rCount = Object.keys(s.reactions || {}).length;
+
         const card = document.createElement("div");
         card.className = "story-card";
         card.innerHTML = `
-          <span class="story-count-badge">1</span>
+          <span class="story-count-badge">👁️${vCount}${rCount > 0 ? ` ❤️${rCount}` : ""}</span>
           <img class="story-bg" src="${s.imageUrl}" alt="Story" />
           <div class="story-user-name">${escapeHtml(s.userName)}${s.caption ? `<br/><span style="font-size:10px;opacity:0.9;">${escapeHtml(s.caption)}</span>` : ""}</div>
         `;
-        card.onclick = () => {
-          document.getElementById("storyViewerUser").textContent = s.userName;
-          document.getElementById("storyViewerImg").src = s.imageUrl;
-          document.getElementById("storyViewerCaption").textContent = s.caption || "BondhuBook স্টোরি";
+        card.onclick = async () => {
+          activeStoryId = sid;
           document.getElementById("storyViewer").classList.remove("hidden");
+          renderStoryViewerUI(sid);
+          await recordStoryView(sid, s);
         };
         bar.appendChild(card);
       });
+
+      if (activeStoryId && !document.getElementById("storyViewer").classList.contains("hidden")) {
+        renderStoryViewerUI(activeStoryId);
+      }
     });
   }
 
-  // POSTS RENDERER
+  // POSTS RENDERER WITH REACTIONS
   function getYoutubeEmbed(url) {
     if (!url) return "";
     const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{11})/);
     return m ? `https://www.youtube.com/embed/${m[1]}` : "";
+  }
+
+  function normalizePostReactions(p) {
+    const map = Object.assign({}, p.reactions || {});
+    (p.likes || []).forEach(uid => {
+      if (!map[uid]) map[uid] = "like";
+    });
+    return map;
   }
 
   function renderHomeFeed() {
@@ -980,10 +1244,9 @@
         const p = docSnap.data();
         const pid = docSnap.id;
         const embedUrl = getYoutubeEmbed(p.videoUrl);
-        const hasVideo = Boolean(p.videoData || embedUrl || p.videoUrl);
-        allPostsCache.push({ pid, p, embedUrl, hasVideo });
+        allPostsCache.push({ pid, p, embedUrl });
 
-        if (hasVideo) videoBox.appendChild(createPostCard(pid, p, embedUrl));
+        if (embedUrl || p.videoUrl) videoBox.appendChild(createPostCard(pid, p, embedUrl));
       });
 
       if (!videoBox.innerHTML) videoBox.innerHTML = '<div class="empty-msg">এখনো কোনো ভিডিও পোস্ট নেই।</div>';
@@ -996,10 +1259,24 @@
   }
 
   function createPostCard(pid, p, embedUrl) {
-    const likes = p.likes || [];
     const comments = p.comments || [];
-    const isLiked = me ? likes.includes(me.uid) : false;
+    const reactionsMap = normalizePostReactions(p);
+    const myReaction = me ? (reactionsMap[me.uid] || null) : null;
     const isMine = me ? p.authorId === me.uid : false;
+
+    const countsByType = { like: 0, love: 0, haha: 0, wow: 0 };
+    let totalReactions = 0;
+    Object.values(reactionsMap).forEach(rKey => {
+      if (countsByType[rKey] !== undefined) {
+        countsByType[rKey] += 1;
+        totalReactions += 1;
+      }
+    });
+
+    const summaryEmojis = REACTION_TYPES
+      .filter(rt => countsByType[rt.key] > 0)
+      .map(rt => `${rt.emoji} ${countsByType[rt.key]}`)
+      .join("  ");
 
     const card = document.createElement("div");
     card.className = "post-card";
@@ -1021,16 +1298,21 @@
       </div>
       ${p.text ? `<div class="post-body-text">${escapeHtml(p.text)}</div>` : ""}
       ${p.imageUrl ? `<img class="post-media" src="${p.imageUrl}" alt="Post" />` : ""}
-      ${p.videoData ? `<video class="post-video-player" src="${p.videoData}" controls playsinline preload="metadata"></video>` : ""}
-      ${!p.videoData && embedUrl ? `<iframe class="video-embed" src="${embedUrl}" allowfullscreen></iframe>` : ""}
+      ${embedUrl ? `<iframe class="video-embed" src="${embedUrl}" allowfullscreen></iframe>` : ""}
+      ${!embedUrl && p.videoUrl ? `<video class="post-video-player" src="${escapeHtml(p.videoUrl)}" controls playsinline preload="metadata"></video>` : ""}
       <div class="post-counts">
-        <span>👍 ${likes.length}</span>
+        <span>${summaryEmojis || `👍 ${totalReactions}`}</span>
         <span>${comments.length} টি কমেন্ট</span>
       </div>
+      <div class="reaction-picker-row">
+        ${REACTION_TYPES.map(rt => {
+          const isSelected = myReaction === rt.key;
+          return `<button type="button" class="react-chip ${isSelected ? rt.activeClass : ''}" data-react="${rt.key}">${rt.emoji} ${rt.label}</button>`;
+        }).join("")}
+      </div>
       <div class="post-action-row">
-        <button type="button" class="p-btn ${isLiked ? 'liked' : ''}">👍 লাইক</button>
-        <button type="button" class="p-btn">💬 কমেন্ট</button>
-        <button type="button" class="p-btn">🔗 শেয়ার</button>
+        <button type="button" class="p-btn cmt-focus-btn">💬 কমেন্ট</button>
+        <button type="button" class="p-btn share-post-btn">🔗 শেয়ার</button>
       </div>
       <div class="comments-box">
         ${comments.map(c => `<div class="cmt-bubble"><strong>${escapeHtml(c.userName)}</strong>${escapeHtml(c.text)}</div>`).join("")}
@@ -1042,7 +1324,7 @@
     `;
 
     if (isMine) {
-      card.querySelector(".edit-btn").onclick = () => openPostModal(Boolean(p.videoUrl || p.videoData), { pid, p });
+      card.querySelector(".edit-btn").onclick = () => openPostModal(Boolean(p.videoUrl), { pid, p });
       card.querySelector(".del-btn").onclick = async () => {
         if (!confirm("আপনি কি এই পোস্টটি ডিলিট করতে চান?")) return;
         try {
@@ -1053,24 +1335,43 @@
       };
     }
 
-    const btns = card.querySelectorAll(".p-btn");
-    btns[0].onclick = async () => {
-      if (!me) return;
-      try {
-        await updateDoc(doc(db, "posts", pid), {
-          likes: isLiked ? arrayRemove(me.uid) : arrayUnion(me.uid)
-        });
-        if (!isLiked && p.authorId !== me.uid) {
-          await addDoc(collection(db, "notifications"), {
-            toUid: p.authorId, text: `${myUserData.name || 'কেউ'} আপনার পোস্টে লাইক দিয়েছেন`, createdAt: serverTimestamp()
-          });
+    card.querySelectorAll(".react-chip").forEach(chipBtn => {
+      chipBtn.onclick = async () => {
+        if (!me) return;
+        const chosenType = chipBtn.dataset.react;
+        const chosenMeta = REACTION_TYPES.find(x => x.key === chosenType);
+        const updatedMap = Object.assign({}, reactionsMap);
+        let isAddingNew = false;
+
+        if (updatedMap[me.uid] === chosenType) {
+          delete updatedMap[me.uid];
+        } else {
+          updatedMap[me.uid] = chosenType;
+          isAddingNew = true;
         }
-      } catch (err) {
-        alert(err.message);
-      }
-    };
-    btns[1].onclick = () => card.querySelector("input").focus();
-    btns[2].onclick = async () => {
+
+        const likeUids = Object.keys(updatedMap).filter(uId => updatedMap[uId] === "like");
+
+        try {
+          await updateDoc(doc(db, "posts", pid), {
+            reactions: updatedMap,
+            likes: likeUids
+          });
+          if (isAddingNew && p.authorId !== me.uid && chosenMeta) {
+            await addDoc(collection(db, "notifications"), {
+              toUid: p.authorId,
+              text: `${myUserData.name || 'কেউ'} আপনার পোস্টে ${chosenMeta.emoji} ${chosenMeta.label} রিঅ্যাকশন দিয়েছেন`,
+              createdAt: serverTimestamp()
+            });
+          }
+        } catch (err) {
+          alert(err.message);
+        }
+      };
+    });
+
+    card.querySelector(".cmt-focus-btn").onclick = () => card.querySelector("input").focus();
+    card.querySelector(".share-post-btn").onclick = async () => {
       const shareText = `${p.authorName}-এর পোস্ট:\n${p.text || ""}\nhttps://bondhubook.pages.dev`;
       try {
         if (navigator.share) {
@@ -1174,7 +1475,6 @@
     if (!me || !peerUid) return;
     const roomId = [me.uid, peerUid].sort().join("_");
     try {
-      const { getDocs } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
       const snap = await getDocs(collection(db, "chats", roomId, "messages"));
       const updates = [];
       snap.forEach(d => {
