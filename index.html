@@ -1964,5 +1964,188 @@ document.addEventListener("click", function (e) {
   }
 }, true);
   </script>
+  <script>
+(function () {
+  function getUserData() {
+    const authUser =
+      window.currentUser ||
+      window.me ||
+      (window.auth && window.auth.currentUser) ||
+      null;
+    const extraUser = window.myUserData || window.userProfile || {};
+
+    return {
+      uid: (authUser && authUser.uid) || extraUser.uid || "",
+      name:
+        (authUser && (authUser.displayName || authUser.name)) ||
+        extraUser.name ||
+        extraUser.displayName ||
+        (authUser && authUser.email) ||
+        "BondhuBook User",
+      email: (authUser && authUser.email) || extraUser.email || "",
+      bio:
+        extraUser.bio ||
+        (authUser && authUser.bio) ||
+        "BondhuBook প্রোফাইলে আপনাকে স্বাগতম।"
+    };
+  }
+
+  function ensureProfileContainer() {
+    let view = document.getElementById("bondhubook-profile-view");
+    if (view) return view;
+
+    view = document.createElement("div");
+    view.id = "bondhubook-profile-view";
+    view.style.cssText =
+      "display:none; background:#fff; padding:16px; margin:8px; border-radius:10px; box-shadow:0 1px 4px rgba(0,0,0,0.08);";
+
+    view.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:10px; margin-bottom:12px;">
+        <h3 style="margin:0; font-size:18px; color:#1877f2;">আমার প্রোফাইল</h3>
+        <button type="button" id="bb-back-to-feed" style="background:#e4e6eb; color:#050505; border:none; padding:6px 12px; border-radius:6px; font-weight:600; cursor:pointer;">
+          ফিডে ফিরুন
+        </button>
+      </div>
+      <div id="bb-profile-details" style="margin-bottom:14px; line-height:1.5;">
+        <div id="bb-profile-name" style="font-size:17px; font-weight:700; color:#050505;"></div>
+        <div id="bb-profile-meta" style="font-size:12px; color:#65676b; margin-top:2px;"></div>
+        <div id="bb-profile-bio" style="font-size:14px; color:#1c1e21; margin-top:8px; background:#f0f2f5; padding:10px; border-radius:8px;"></div>
+      </div>
+      <div style="font-size:15px; font-weight:700; color:#050505; margin-bottom:8px; border-top:1px solid #eee; padding-top:10px;">
+        আমার পোস্টসমূহ
+      </div>
+      <div id="bb-profile-posts" style="font-size:13px; color:#65676b;">
+        পোস্ট লোড হচ্ছে...
+      </div>
+    `;
+
+    const navBar = document.querySelector(".fb-nav-tabs");
+    if (navBar && navBar.parentElement) {
+      navBar.parentElement.insertBefore(view, navBar.nextSibling);
+    } else {
+      document.body.appendChild(view);
+    }
+
+    const backBtn = view.querySelector("#bb-back-to-feed");
+    if (backBtn) {
+      backBtn.addEventListener("click", function () {
+        hideProfileView();
+        const tabs = document.querySelectorAll(".fb-nav-tabs .nav-tab, .nav-tab");
+        if (tabs.length > 0) {
+          tabs.forEach((t) => t.classList.remove("active"));
+          tabs[0].classList.add("active");
+          tabs[0].click();
+        }
+      });
+    }
+
+    return view;
+  }
+
+  function populateProfileDetails(user) {
+    const nameEl = document.getElementById("bb-profile-name");
+    const metaEl = document.getElementById("bb-profile-meta");
+    const bioEl = document.getElementById("bb-profile-bio");
+    const postsEl = document.getElementById("bb-profile-posts");
+
+    if (nameEl) nameEl.textContent = user.name;
+    if (metaEl) {
+      const parts = [];
+      if (user.email) parts.push(user.email);
+      if (user.uid) parts.push("ID: " + user.uid);
+      metaEl.textContent = parts.join(" • ") || "BondhuBook Member";
+    }
+    if (bioEl) bioEl.textContent = user.bio;
+
+    if (postsEl) {
+      const cards = Array.from(document.querySelectorAll(".post-card"));
+      const matchingCards = cards.filter((card) => {
+        if (card.closest("#bondhubook-profile-view")) return false;
+        const authorText = (card.textContent || "").toLowerCase();
+        return user.name && authorText.includes(user.name.toLowerCase());
+      });
+
+      if (matchingCards.length > 0) {
+        postsEl.innerHTML = "";
+        matchingCards.forEach((card) => {
+          const clone = card.cloneNode(true);
+          clone.style.display = "block";
+          postsEl.appendChild(clone);
+        });
+      } else {
+        postsEl.textContent = "এই প্রোফাইলের পোস্টগুলো ফিড থেকে দেখা যাবে বা এখনো কোনো পোস্ট যুক্ত হয়নি।";
+      }
+    }
+  }
+
+  function setMainContentVisibility(hide) {
+    const navBar = document.querySelector(".fb-nav-tabs");
+    const profileView = document.getElementById("bondhubook-profile-view");
+    const parent = (navBar && navBar.parentElement) || document.body;
+
+    Array.from(parent.children).forEach((child) => {
+      if (child === navBar || child === profileView) return;
+      if (child.tagName === "SCRIPT" || child.tagName === "STYLE") return;
+
+      if (hide) {
+        if (!child.dataset.bbPrevDisplay) {
+          child.dataset.bbPrevDisplay = child.style.display || "";
+        }
+        child.style.display = "none";
+      } else if (child.dataset.bbPrevDisplay !== undefined) {
+        child.style.display = child.dataset.bbPrevDisplay;
+      }
+    });
+  }
+
+  function openOwnProfile() {
+    const user = getUserData();
+    const view = ensureProfileContainer();
+    populateProfileDetails(user);
+    setMainContentVisibility(true);
+
+    view.style.display = "block";
+    view.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    if (typeof window.loadUserProfile === "function" && user.uid) {
+      try { window.loadUserProfile(user.uid); } catch (e) {}
+    } else if (typeof window.renderProfile === "function") {
+      try { window.renderProfile(user); } catch (e) {}
+    }
+  }
+
+  function hideProfileView() {
+    const view = document.getElementById("bondhubook-profile-view");
+    if (view) view.style.display = "none";
+    setMainContentVisibility(false);
+  }
+
+  window.openOwnProfile = openOwnProfile;
+  window.hideProfileView = hideProfileView;
+
+  document.addEventListener("click", function (e) {
+    const tab = e.target.closest(".fb-nav-tabs .nav-tab, .nav-tab");
+    if (!tab) return;
+
+    const navBar = tab.closest(".fb-nav-tabs");
+    const allTabs = navBar
+      ? Array.from(navBar.querySelectorAll(".nav-tab"))
+      : Array.from(document.querySelectorAll(".nav-tab"));
+
+    const isLastTab = allTabs.length > 0 && allTabs[allTabs.length - 1] === tab;
+
+    allTabs.forEach((t) => t.classList.remove("active"));
+    tab.classList.add("active");
+
+    if (isLastTab) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      openOwnProfile();
+    } else {
+      hideProfileView();
+    }
+  }, true);
+})();
+      </script>
   </body>
             </html>
