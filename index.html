@@ -1903,5 +1903,66 @@ document.addEventListener("click", (e) => {
   }
 });
  </script>
+  <script>
+document.addEventListener("click", function (e) {
+  const navBar = e.target.closest(".fb-nav-tabs");
+  const tab = e.target.closest(".nav-tab");
+  if (!tab) return;
+
+  const allTabs = navBar
+    ? Array.from(navBar.querySelectorAll(".nav-tab"))
+    : Array.from(document.querySelectorAll(".nav-tab"));
+
+  const isProfileTab =
+    allTabs.length > 0 && allTabs[allTabs.length - 1] === tab;
+
+  if (!isProfileTab) return;
+
+  e.preventDefault();
+  e.stopImmediatePropagation();
+
+  allTabs.forEach((t) => t.classList.remove("active"));
+  tab.classList.add("active");
+
+  document
+    .querySelectorAll(
+      "#feed-section, #homeFeed, .feed-section, .home-feed, [data-feed-view], " +
+      "#notifications-section, #notificationsPage, #notifSection, .notifications-view, .notif-section, [data-notif-view]"
+    )
+    .forEach((el) => {
+      el.style.display = "none";
+      el.classList.add("hidden");
+    });
+
+  const profileEl =
+    document.getElementById("profile-section") ||
+    document.getElementById("profilePage") ||
+    document.getElementById("profileView") ||
+    document.getElementById("myProfile") ||
+    document.querySelector(
+      "[data-profile-view], .profile-view, .profile-page, .profile-section, #profile"
+    );
+
+  if (profileEl) {
+    profileEl.style.display = "block";
+    profileEl.classList.remove("hidden", "d-none");
+    profileEl.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  const user =
+    window.currentUser ||
+    window.me ||
+    (window.auth && window.auth.currentUser) ||
+    null;
+
+  if (typeof window.loadUserProfile === "function" && user && user.uid) {
+    window.loadUserProfile(user.uid);
+  } else if (typeof window.renderProfile === "function") {
+    window.renderProfile(user);
+  } else if (typeof window.openProfile === "function") {
+    window.openProfile(user);
+  }
+}, true);
+  </script>
   </body>
             </html>
