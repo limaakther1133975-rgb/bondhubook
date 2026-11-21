@@ -108,7 +108,7 @@
       font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
     }
-    .story-user-name {
+    .story-user-name {feed
       position: relative; z-index: 2; color: #fff; font-size: 12px; font-weight: 600;
       padding: 8px; line-height: 1.25; text-shadow: 0 1px 3px rgba(0,0,0,0.85);
     }
@@ -1811,19 +1811,20 @@
   }
 </script>
  <script>
-// ১. নিজের প্রোফাইল ওপেন করার হেল্পার
 function openOwnProfile(currentUser) {
-  if (!currentUser) return;
+  const user = currentUser || window.currentUser || window.me || (window.auth && window.auth.currentUser) || null;
+  if (!user) return;
 
-  // সাধারণ প্রোফাইল সেকশন / ট্যাব দেখানোর লজিক
   const profileSection =
     document.getElementById("profile-section") ||
     document.getElementById("profilePage") ||
-    document.querySelector("[data-profile-view]");
+    document.getElementById("myProfile") ||
+    document.querySelector("[data-profile-view], .profile-view, .profile-page");
+
   const feedSection =
     document.getElementById("feed-section") ||
     document.getElementById("homeFeed") ||
-    document.querySelector("[data-feed-view]");
+    document.querySelector("[data-feed-view], .feed-section, .home-feed");
 
   if (feedSection) feedSection.style.display = "none";
   if (profileSection) {
@@ -1831,63 +1832,44 @@ function openOwnProfile(currentUser) {
     profileSection.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  // প্রোফাইলের নাম, ইমেইল বা UID বসানো থাকলে তা আপডেট করা
   const nameEl = document.getElementById("profile-name") || document.querySelector("[data-profile-name]");
   if (nameEl) {
-    nameEl.textContent = currentUser.displayName || currentUser.email || "My Profile";
+    nameEl.textContent = user.displayName || user.name || user.email || "My Profile";
   }
 
-  // যদি তোমার ফাইলে আগে থেকেই কোনো প্রোফাইল লোডার ফাংশন থাকে (যেমন loadUserProfile বা renderProfile), সেটি কল করা
   if (typeof window.loadUserProfile === "function") {
-    window.loadUserProfile(currentUser.uid);
+    window.loadUserProfile(user.uid);
   } else if (typeof window.renderProfile === "function") {
-    window.renderProfile(currentUser);
+    window.renderProfile(user);
   }
 }
 
-// প্রোফাইল আইকন বা প্রোফাইল ট্যাবে ক্লিক ইভেন্ট যুক্ত করা
-document.addEventListener("click", (e) => {
-  const profileTrigger = e.target.closest(
-    "#profile-btn, #profileTab, [data-action='open-profile'], [aria-label*='Profile' i], [aria-label*='প্রোফাইল']"
-  );
-  if (profileTrigger) {
-    e.preventDefault();
-    const user = window.currentUser || (window.auth && window.auth.currentUser) || null;
-    openOwnProfile(user);
-  }
-});
-
-// ২. নোটিফিকেশন ব্যাজ আপডেট ও একবার দেখার পর রিসেট করার লজিক
 function setNotificationBadgeCount(count) {
-  const badge =
-    document.getElementById("notification-badge") ||
-    document.getElementById("notifBadge") ||
-    document.querySelector(".notification-badge, .notif-badge, [data-notif-badge]");
-
-  if (!badge) return;
-
+  const badges = document.querySelectorAll(
+    "#notification-badge, #notifBadge, .fb-nav-tabs .badge, .nav-tab .badge, .badge, .notif-badge, [data-notif-badge]"
+  );
   const safeCount = Math.max(0, Number(count) || 0);
-  if (safeCount > 0) {
-    badge.textContent = String(safeCount);
-    badge.style.display = "";
-    badge.classList.remove("hidden", "d-none");
-  } else {
-    badge.textContent = "";
-    badge.style.display = "none";
-    badge.classList.add("hidden");
-  }
+
+  badges.forEach((badge) => {
+    if (safeCount > 0) {
+      badge.textContent = String(safeCount);
+      badge.style.display = "";
+      badge.classList.remove("hidden", "d-none");
+    } else {
+      badge.textContent = "";
+      badge.style.display = "none";
+      badge.classList.add("hidden");
+    }
+  });
 }
 
-// নোটিফিকেশনে ক্লিক করলে আনরিড সংখ্যা 0 করা এবং দেখা হয়ে গেছে বলে মার্ক করা
 async function markNotificationsAsSeen(userId) {
   setNotificationBadgeCount(0);
 
-  // লোকাল/মেমোরি স্টেটে থাকা আনরিড কাউন্ট রিসেট করা
   if (typeof window.unreadNotificationsCount !== "undefined") {
     window.unreadNotificationsCount = 0;
   }
 
-  // Firebase Firestore বা Realtime Database থাকলে seen/read আপডেট করার হেল্পার
   try {
     if (window.db && userId && typeof window.markAllNotificationsRead === "function") {
       await window.markAllNotificationsRead(userId);
@@ -1898,16 +1880,28 @@ async function markNotificationsAsSeen(userId) {
 }
 
 document.addEventListener("click", (e) => {
-  const notifTrigger = e.target.closest(
-    "#notification-btn, #notifTab, [data-action='open-notifications'], [aria-label*='Notification' i], [aria-label*='নোটিফিকেশন']"
-  );
-  if (notifTrigger) {
-    const user = window.currentUser || (window.auth && window.auth.currentUser) || null;
-    markNotificationsAsSeen(user ? user.uid : null);
+  const clickedTab = e.target.closest(".nav-tab");
+
+  if (clickedTab) {
+    document.querySelectorAll(".fb-nav-tabs .nav-tab, .nav-tab").forEach((tab) => {
+      tab.classList.remove("active");
+    });
+    clickedTab.classList.add("active");
+
+    const hasBadge = clickedTab.querySelector(".badge");
+    const isLastTab =
+      clickedTab.parentElement &&
+      clickedTab.parentElement.lastElementChild === clickedTab;
+
+    if (hasBadge) {
+      const user = window.currentUser || window.me || (window.auth && window.auth.currentUser) || null;
+      markNotificationsAsSeen(user ? user.uid : null);
+    } else if (isLastTab) {
+      e.preventDefault();
+      openOwnProfile();
+    }
   }
 });
-
-// নতুন নোটিফিকেশন এলে এই ফাংশন কল করলে লাল ব্যাজ ও সংখ্যা আবার দেখাবে:
-// setNotificationBadgeCount(newUnreadCount);
- </script> </body>
+ </script>
+  </body>
             </html>
