@@ -44,16 +44,17 @@
       padding: 2px 7px; border-radius: 12px; margin-left: 6px;
     }
 
-    /* Status Bar */
+    /* Status Bar & Blue Online Indicator */
     .status-composer-bar {
       background: #fff; padding: 10px 14px; display: flex; align-items: center; gap: 10px;
       border-bottom: 1px solid #e4e6eb;
     }
-    .avatar-wrap { position: relative; width: 42px; height: 42px; flex-shrink: 0; cursor: pointer; }
-    .avatar-wrap img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; }
-    .online-dot {
-      width: 11px; height: 11px; background: #31a24c; border: 2px solid #fff;
+    .avatar-wrap { position: relative; width: 44px; height: 44px; flex-shrink: 0; cursor: pointer; }
+    .avatar-wrap img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid #1877f2; }
+    .online-blue-dot {
+      width: 13px; height: 13px; background: #1877f2; border: 2px solid #fff;
       border-radius: 50%; position: absolute; bottom: 0; right: 0;
+      box-shadow: 0 0 6px rgba(24, 119, 242, 0.85);
     }
     .status-pill {
       flex: 1; background: #f0f2f5; border-radius: 22px; padding: 10px 16px;
@@ -102,7 +103,7 @@
       font-size: 22px; font-weight: bold; margin: -18px auto 0; position: relative; z-index: 2;
     }
     .create-story-label { text-align: center; font-size: 12px; font-weight: 700; color: #050505; padding-bottom: 8px; }
-    .story-count-badge {
+    .story-owner-badge {
       position: absolute; top: 8px; left: 8px; z-index: 2; background: #1877f2; color: #fff;
       font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
@@ -259,7 +260,7 @@
     }
     .media-pick-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
 
-    /* Full Screen Story Viewer with Reactions & Viewers */
+    /* Full Screen Story Viewer */
     .story-viewer {
       position: fixed; inset: 0; background: #000; z-index: 600;
       display: flex; flex-direction: column; justify-content: space-between; padding: 14px;
@@ -326,7 +327,7 @@
         <div class="fb-top-icons">
           <button type="button" class="circle-icon" onclick="openPostModal()" title="পোস্ট করুন">+</button>
           <button type="button" class="circle-icon" onclick="switchTab('friends')" title="বন্ধু খুঁজুন">🔍</button>
-          <button type="button" class="circle-icon" onclick="openProfileView(me && me.uid)" title="আমার প্রোফাইল ও সেটিংস">☰</button>
+          <button type="button" class="circle-icon" onclick="openProfileView(me && me.uid)" title="আমার প্রোফাইল">☰</button>
         </div>
       </div>
 
@@ -359,9 +360,9 @@
     <!-- TAB 1: HOME FEED -->
     <div id="tab-home">
       <div class="status-composer-bar">
-        <div class="avatar-wrap" onclick="openProfileView(me && me.uid)">
+        <div class="avatar-wrap" onclick="openProfileView(me && me.uid)" title="নিজের প্রোফাইলে যান">
           <img id="barAvatar" src="https://i.ibb.co/4pDNDk1/avatar.png" alt="Me" />
-          <span class="online-dot"></span>
+          <span class="online-blue-dot" title="অনলাইন"></span>
         </div>
         <div class="status-pill" onclick="openPostModal()">আপনি কী ভাবছেন?</div>
         <label class="photo-quick-btn">
@@ -513,6 +514,7 @@
     <textarea id="modalPostText" rows="3" placeholder="আপনি কী ভাবছেন?"></textarea>
     <input type="text" id="modalVideoUrl" class="hidden" placeholder="YouTube বা ভিডিও লিংক দিন (যেমন: https://youtu.be/...)" />
     <img id="modalImgPreview" style="width:100%; max-height:220px; object-fit:cover; border-radius:8px; margin-bottom:10px; display:none;" />
+    <video id="modalVideoPreview" controls playsinline style="width:100%; max-height:220px; border-radius:8px; margin-bottom:10px; display:none; background:#000;"></video>
     <div id="modalStatusNote" style="font-size:12px; color:#1877f2; font-weight:600; margin-bottom:8px;"></div>
     <div id="modalMediaRow" style="display:flex; justify-content:space-between; align-items:center; gap:6px; flex-wrap:wrap;">
       <div class="media-pick-row" style="margin-bottom:0;">
@@ -520,7 +522,11 @@
           🖼️ ছবি
           <input type="file" id="modalPhotoInput" accept="image/*" class="hidden" />
         </label>
-        <button type="button" id="modalVideoLinkBtn" class="btn-gray" onclick="toggleVideoUrlInput()">🎬 ভিডিও লিংক</button>
+        <label id="modalVideoFileLabel" class="btn-gray" style="cursor:pointer;">
+          🎬 গ্যালারি ভিডিও
+          <input type="file" id="modalVideoFileInput" accept="video/*" class="hidden" />
+        </label>
+        <button type="button" id="modalVideoLinkBtn" class="btn-gray" onclick="toggleVideoUrlInput()">🔗 YouTube লিংক</button>
       </div>
       <button type="button" id="submitPostBtn" class="btn-fb">পোস্ট করুন</button>
     </div>
@@ -546,12 +552,12 @@
   </div>
 </div>
 
-<!-- FULL SCREEN STORY VIEWER WITH REACTIONS & VIEWERS -->
+<!-- FULL SCREEN STORY VIEWER -->
 <div id="storyViewer" class="story-viewer hidden">
   <div class="story-viewer-top">
     <div>
       <strong id="storyViewerUser">ইউজার</strong><br/>
-      <span id="storyViewerStats" style="font-size:11px; opacity:0.85;"></span>
+      <span id="storyViewerStats" style="font-size:11px; opacity:0.88;"></span>
     </div>
     <button type="button" class="circle-icon" onclick="closeStoryViewer()">✕</button>
   </div>
@@ -563,7 +569,7 @@
   </div>
 </div>
 
-<!-- STORY VIEWERS & REACTIONS MODAL -->
+<!-- STORY VIEWERS & REACTIONS MODAL (OWNER ONLY) -->
 <div id="storyInsightsModal" class="modal-overlay hidden" style="z-index:700;">
   <div class="modal-box">
     <div class="modal-header">
@@ -615,6 +621,7 @@
   let currentFeedFilter = "all";
   let editingPostId = null;
   let selectedPostImageFile = null;
+  let selectedPostVideoFile = null;
 
   const REACTION_TYPES = [
     { key: "like", emoji: "👍", label: "লাইক", activeClass: "active-like" },
@@ -630,6 +637,25 @@
     const data = await res.json();
     if (!data.success) throw new Error(data.error?.message || "ছবি আপলোড ব্যর্থ হয়েছে");
     return data.data.url;
+  }
+
+  function fileToDataUrl(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error("ভিডিও ফাইল পড়া যায়নি"));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function uploadMediaFile(file) {
+    if (file.type.startsWith("image/")) {
+      return await uploadToImgBB(file);
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      throw new Error("গ্যালারি ভিডিওর সাইজ ১০ MB-এর কম রাখুন অথবা YouTube লিংক দিন");
+    }
+    return await fileToDataUrl(file);
   }
 
   // AUTH LOGIC
@@ -791,7 +817,7 @@
     }
 
     if (activeProfileSubtab === "reels") {
-      const videoPosts = userPosts.filter(item => Boolean(item.embedUrl || item.p.videoUrl));
+      const videoPosts = userPosts.filter(item => Boolean(item.p.videoData || item.embedUrl || item.p.videoUrl));
       if (!videoPosts.length) {
         box.innerHTML = '<div class="empty-msg">কোনো Reels বা ভিডিও পোস্ট নেই।</div>';
         return;
@@ -874,7 +900,7 @@
     renderProfileSubtabContent(targetUid);
   }
 
-  // POST & VIDEO MODAL
+  // POST & VIDEO MODAL (CREATE, EDIT, PHOTO, GALLERY VIDEO & YOUTUBE LINK)
   window.toggleVideoUrlInput = () => {
     const inp = document.getElementById("modalVideoUrl");
     inp.classList.toggle("hidden");
@@ -884,8 +910,10 @@
   window.openPostModal = (videoMode = false, editItem = null) => {
     editingPostId = editItem ? editItem.pid : null;
     selectedPostImageFile = null;
+    selectedPostVideoFile = null;
     document.getElementById("postModal").classList.remove("hidden");
     document.getElementById("modalImgPreview").style.display = "none";
+    document.getElementById("modalVideoPreview").style.display = "none";
     document.getElementById("modalStatusNote").textContent = "";
 
     if (editItem) {
@@ -894,6 +922,7 @@
       document.getElementById("modalVideoUrl").classList.toggle("hidden", !editItem.p.videoUrl);
       document.getElementById("modalVideoUrl").value = editItem.p.videoUrl || "";
       document.getElementById("modalPhotoLabel").classList.add("hidden");
+      document.getElementById("modalVideoFileLabel").classList.add("hidden");
       document.getElementById("modalVideoLinkBtn").classList.add("hidden");
       document.getElementById("submitPostBtn").textContent = "আপডেট করুন";
     } else {
@@ -902,6 +931,7 @@
       document.getElementById("modalVideoUrl").value = "";
       document.getElementById("modalVideoUrl").classList.toggle("hidden", !videoMode);
       document.getElementById("modalPhotoLabel").classList.remove("hidden");
+      document.getElementById("modalVideoFileLabel").classList.remove("hidden");
       document.getElementById("modalVideoLinkBtn").classList.remove("hidden");
       document.getElementById("submitPostBtn").textContent = "পোস্ট করুন";
     }
@@ -910,13 +940,17 @@
   window.closePostModal = () => {
     editingPostId = null;
     selectedPostImageFile = null;
+    selectedPostVideoFile = null;
     document.getElementById("postModal").classList.add("hidden");
     document.getElementById("modalPostText").value = "";
     document.getElementById("modalVideoUrl").value = "";
     document.getElementById("modalPhotoInput").value = "";
+    document.getElementById("modalVideoFileInput").value = "";
     document.getElementById("modalPhotoLabel").classList.remove("hidden");
+    document.getElementById("modalVideoFileLabel").classList.remove("hidden");
     document.getElementById("modalVideoLinkBtn").classList.remove("hidden");
     document.getElementById("modalImgPreview").style.display = "none";
+    document.getElementById("modalVideoPreview").style.display = "none";
     document.getElementById("modalStatusNote").textContent = "";
     document.getElementById("submitPostBtn").textContent = "পোস্ট করুন";
   };
@@ -937,9 +971,24 @@
     const f = e.target.files[0];
     if (f) {
       selectedPostImageFile = f;
+      selectedPostVideoFile = null;
+      document.getElementById("modalVideoPreview").style.display = "none";
       document.getElementById("modalImgPreview").src = URL.createObjectURL(f);
       document.getElementById("modalImgPreview").style.display = "block";
       document.getElementById("modalStatusNote").textContent = `ছবি সিলেক্ট হয়েছে: ${f.name}`;
+    }
+    e.target.value = "";
+  };
+
+  document.getElementById("modalVideoFileInput").onchange = (e) => {
+    const f = e.target.files[0];
+    if (f) {
+      selectedPostVideoFile = f;
+      selectedPostImageFile = null;
+      document.getElementById("modalImgPreview").style.display = "none";
+      document.getElementById("modalVideoPreview").src = URL.createObjectURL(f);
+      document.getElementById("modalVideoPreview").style.display = "block";
+      document.getElementById("modalStatusNote").textContent = `গ্যালারি ভিডিও সিলেক্ট হয়েছে: ${f.name}`;
     }
     e.target.value = "";
   };
@@ -948,8 +997,8 @@
     if (!me) return;
     const text = document.getElementById("modalPostText").value.trim();
     const videoUrl = document.getElementById("modalVideoUrl").value.trim();
-    if (!text && !selectedPostImageFile && !videoUrl && !editingPostId) {
-      return alert("কিছু লিখুন, ছবি সিলেক্ট করুন অথবা ভিডিও লিংক দিন");
+    if (!text && !selectedPostImageFile && !selectedPostVideoFile && !videoUrl && !editingPostId) {
+      return alert("কিছু লিখুন, ছবি/ভিডিও সিলেক্ট করুন অথবা YouTube লিংক দিন");
     }
 
     const btn = document.getElementById("submitPostBtn");
@@ -964,8 +1013,12 @@
         });
       } else {
         let imageUrl = "";
+        let uploadedVideoData = "";
         if (selectedPostImageFile) {
-          imageUrl = await uploadToImgBB(selectedPostImageFile);
+          imageUrl = await uploadMediaFile(selectedPostImageFile);
+        }
+        if (selectedPostVideoFile) {
+          uploadedVideoData = await uploadMediaFile(selectedPostVideoFile);
         }
         await addDoc(collection(db, "posts"), {
           authorId: me.uid,
@@ -974,6 +1027,7 @@
           text,
           imageUrl,
           videoUrl,
+          videoData: uploadedVideoData,
           likes: [],
           reactions: {},
           comments: [],
@@ -989,7 +1043,7 @@
     }
   };
 
-  // STORIES WITH CAPTION, REACTIONS & VIEWERS
+  // STORIES WITH CAPTION, REACTIONS & OWNER-ONLY VIEWERS/REACTIONS
   window.openStoryModal = () => {
     document.getElementById("storyModal").classList.remove("hidden");
   };
@@ -1065,9 +1119,11 @@
     document.getElementById("storyViewerUser").textContent = s.userName || "ইউজার";
     document.getElementById("storyViewerImg").src = s.imageUrl || "";
     document.getElementById("storyViewerCaption").textContent = s.caption || "BondhuBook স্টোরি";
+
+    // Only story owner sees view count and reaction count; other viewers only see react bar
     document.getElementById("storyViewerStats").textContent = isOwner
       ? `👁️ ${viewerCount} জন দেখেছেন • ❤️ ${reactCount} রিঅ্যাক্ট`
-      : (reactCount > 0 ? `❤️ ${reactCount} রিঅ্যাক্ট` : "স্টোরিতে রিঅ্যাক্ট দিন");
+      : "স্টোরিতে রিঅ্যাক্ট দিন";
 
     const reactBar = document.getElementById("storyReactionBar");
     reactBar.innerHTML = "";
@@ -1113,10 +1169,12 @@
   }
 
   window.openStoryInsightsModal = () => {
-    if (!activeStoryId) return;
+    if (!activeStoryId || !me) return;
     const entry = allStoriesCache.find(x => x.id === activeStoryId);
     if (!entry) return;
     const s = entry.data;
+    if (s.userId !== me.uid) return;
+
     const viewersMap = s.viewers || {};
     const reactionsMap = s.reactions || {};
 
@@ -1169,13 +1227,14 @@
         const sid = d.id;
         allStoriesCache.push({ id: sid, data: s });
 
+        const isOwner = me && s.userId === me.uid;
         const vCount = Object.keys(s.viewers || {}).length;
         const rCount = Object.keys(s.reactions || {}).length;
 
         const card = document.createElement("div");
         card.className = "story-card";
         card.innerHTML = `
-          <span class="story-count-badge">👁️${vCount}${rCount > 0 ? ` ❤️${rCount}` : ""}</span>
+          ${isOwner ? `<span class="story-owner-badge">👁️${vCount} ❤️${rCount}</span>` : ""}
           <img class="story-bg" src="${s.imageUrl}" alt="Story" />
           <div class="story-user-name">${escapeHtml(s.userName)}${s.caption ? `<br/><span style="font-size:10px;opacity:0.9;">${escapeHtml(s.caption)}</span>` : ""}</div>
         `;
@@ -1246,7 +1305,7 @@
         const embedUrl = getYoutubeEmbed(p.videoUrl);
         allPostsCache.push({ pid, p, embedUrl });
 
-        if (embedUrl || p.videoUrl) videoBox.appendChild(createPostCard(pid, p, embedUrl));
+        if (p.videoData || embedUrl || p.videoUrl) videoBox.appendChild(createPostCard(pid, p, embedUrl));
       });
 
       if (!videoBox.innerHTML) videoBox.innerHTML = '<div class="empty-msg">এখনো কোনো ভিডিও পোস্ট নেই।</div>';
@@ -1298,8 +1357,9 @@
       </div>
       ${p.text ? `<div class="post-body-text">${escapeHtml(p.text)}</div>` : ""}
       ${p.imageUrl ? `<img class="post-media" src="${p.imageUrl}" alt="Post" />` : ""}
-      ${embedUrl ? `<iframe class="video-embed" src="${embedUrl}" allowfullscreen></iframe>` : ""}
-      ${!embedUrl && p.videoUrl ? `<video class="post-video-player" src="${escapeHtml(p.videoUrl)}" controls playsinline preload="metadata"></video>` : ""}
+      ${p.videoData ? `<video class="post-video-player" src="${p.videoData}" controls playsinline preload="metadata"></video>` : ""}
+      ${!p.videoData && embedUrl ? `<iframe class="video-embed" src="${embedUrl}" allowfullscreen></iframe>` : ""}
+      ${!p.videoData && !embedUrl && p.videoUrl ? `<video class="post-video-player" src="${escapeHtml(p.videoUrl)}" controls playsinline preload="metadata"></video>` : ""}
       <div class="post-counts">
         <span>${summaryEmojis || `👍 ${totalReactions}`}</span>
         <span>${comments.length} টি কমেন্ট</span>
@@ -1324,7 +1384,7 @@
     `;
 
     if (isMine) {
-      card.querySelector(".edit-btn").onclick = () => openPostModal(Boolean(p.videoUrl), { pid, p });
+      card.querySelector(".edit-btn").onclick = () => openPostModal(Boolean(p.videoUrl || p.videoData), { pid, p });
       card.querySelector(".del-btn").onclick = async () => {
         if (!confirm("আপনি কি এই পোস্টটি ডিলিট করতে চান?")) return;
         try {
@@ -1449,17 +1509,27 @@
     allUsersCache.forEach(u => {
       if (roomListeners[u.uid]) return;
       const roomId = [me.uid, u.uid].sort().join("_");
-      roomListeners[u.uid] = onSnapshot(query(collection(db, "chats", roomId, "messages"), orderBy("createdAt", "asc")), (snap) => {
+      roomListeners[u.uid] = onSnapshot(query(collection(db, "chats", roomId, "messages"), orderBy("createdAt", "asc")), async (snap) => {
         let unread = 0;
         let lastMsgText = "মেসেজ পাঠাতে ট্যাপ করুন";
+        let hasUnreadInOpenRoom = false;
 
         snap.forEach(d => {
           const m = d.data();
           if (m.text) lastMsgText = m.text;
-          if (m.senderId === u.uid && !m.seenByMe && activeChatPeerUid !== u.uid) {
-            unread += 1;
+          if (m.senderId === u.uid && !m.seenByMe) {
+            if (activeChatPeerUid === u.uid && !document.getElementById("chatConversationView").classList.contains("hidden")) {
+              hasUnreadInOpenRoom = true;
+            } else {
+              unread += 1;
+            }
           }
         });
+
+        if (hasUnreadInOpenRoom) {
+          await markRoomMessagesAsRead(u.uid);
+          unread = 0;
+        }
 
         roomUnreadMap[u.uid] = unread;
         roomLastMsgMap[u.uid] = lastMsgText;
@@ -1473,6 +1543,8 @@
 
   async function markRoomMessagesAsRead(peerUid) {
     if (!me || !peerUid) return;
+    roomUnreadMap[peerUid] = 0;
+    updateChatBadges();
     const roomId = [me.uid, peerUid].sort().join("_");
     try {
       const snap = await getDocs(collection(db, "chats", roomId, "messages"));
@@ -1484,8 +1556,6 @@
         }
       });
       if (updates.length) await Promise.all(updates);
-      roomUnreadMap[peerUid] = 0;
-      updateChatBadges();
     } catch (_) {}
   }
 
@@ -1741,4 +1811,4 @@
   }
 </script>
 </body>
-  </html>
+            </html>
